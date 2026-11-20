@@ -680,6 +680,9 @@ function cliInfo(){const n=$('#fName').value.trim(),ph=$('#fPhone').value;let c=
 $('#fName').addEventListener('change',cliInfo);$('#fPhone').addEventListener('change',cliInfo);
 
 /* ---- richieste dal sito ---- */
+function beep(){try{const A=new (window.AudioContext||window.webkitAudioContext)();[0,.25].forEach(t=>{const o=A.createOscillator(),g=A.createGain();o.frequency.value=880;o.connect(g);g.connect(A.destination);g.gain.setValueAtTime(.25,A.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+t+.2);o.start(A.currentTime+t);o.stop(A.currentTime+t+.22)})}catch(e){}}
+function notifyReq(list){const r=list[0],t=`Nuova richiesta: ${r.name} · ${r.people}p · ${fmtShort(r.date)} ${r.time}`;toast(t);beep();
+  try{if('Notification' in window&&Notification.permission==='granted')new Notification('Prenotazione online',{body:t,icon:'icon-192.png'})}catch(e){}}
 let reqs=[],rEdit=null;
 const waTo=(phone,msg)=>{let d=String(phone||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);else if(d.length<=10&&d.startsWith('3'))d='39'+d;return 'https://wa.me/'+d+'?text='+encodeURIComponent(msg)};
 function freeTimes(r){const c=new Set(cfg.turni);for(let v=1140;v<=1350;v+=30)c.add(hm(v));return [...c].sort((x,y)=>toMin(x)-toMin(y)).filter(t=>t!==r.time&&plan(r.date,{...r,id:'__r',time:t,status:'confermata',tables:[]}).as.has('__r')).slice(0,4)}
@@ -760,6 +763,7 @@ async function aiRead(prompt,opts){
   try{const r=await sampleFn.json(prompt,opts);const arr=(Array.isArray(r)?r:[]).map(clean).filter(x=>x.name||x.people);qMsg(arr.length?`Trovate ${arr.length} prenotazioni: controlla e salva.`:'Non ho trovato prenotazioni.',!arr.length);return arr}
   catch(e){qMsg(sErr(e),true);return[]}finally{$('#qGo').disabled=false}
 }
+document.addEventListener('click',()=>{try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}catch(e){}},{once:true});
 $('#qf').addEventListener('submit',async e=>{
   e.preventDefault();const txt=$('#qText').value.trim();if(!txt)return;
   const lines=txt.split(/\n|;/).map(x=>x.trim()).filter(Boolean),ok=[],ko=[];
@@ -820,7 +824,11 @@ render();
   },err=>{clearTimeout(timer);ready=true;setSync('err','Errore');banner('Collegamento interrotto ('+err.code+'). Ricarica la pagina.');render()});
   db.doc('pubblico/calendario').onSnapshot(s=>{if(s.exists){const d=s.data();cal={chiusoSett:Array.isArray(d.chiusoSett)?d.chiusoSett.map(Number):[1],orari:Array.isArray(d.orari)&&d.orari.length?d.orari.map(String):DEF_ORARI,giorni:d.giorni&&typeof d.giorni==='object'?d.giorni:{}}}render()},()=>{});
   db.collection('clienti').onSnapshot(s=>{cMeta={};s.docs.forEach(d=>cMeta[d.id]=d.data());_ver++;render()},()=>{});
-  db.collection('richieste').where('stato','in',['nuova','attesa']).onSnapshot(s=>{reqs=s.docs.map(d=>({id:d.id,...d.data()}));renderReq()},()=>{});
+  let reqFirst=true,seen=new Set();
+  db.collection('richieste').where('stato','in',['nuova','attesa']).onSnapshot(s=>{reqs=s.docs.map(d=>({id:d.id,...d.data()}));
+    const fresh=reqs.filter(r=>r.stato==='nuova'&&!seen.has(r.id));reqs.forEach(r=>seen.add(r.id));
+    if(!reqFirst&&fresh.length)notifyReq(fresh);reqFirst=false;
+    document.title=(reqs.length?'('+reqs.length+') ':'')+'Blackout Prenotazioni';renderReq()},()=>{});
   db.doc('config/settings').onSnapshot(s=>{
     if(s.exists){const d=s.data();cfg={capacity:+d.capacity||72,turni:Array.isArray(d.turni)&&d.turni.length?d.turni.map(String):cfg.turni,dur:+d.dur||90,durSab:+d.durSab||70,buffer:Number.isFinite(+d.buffer)?+d.buffer:10,heads:Number.isFinite(+d.heads)?+d.heads:1,
       tables:Array.isArray(d.tables)&&d.tables.length?d.tables.map(t=>({id:String(t.id),fila:String(t.fila||''),solo:+t.solo||1,join:t.join!==undefined?!!t.join:+t.lati>0})):DEF_TABLES}}

@@ -107,9 +107,11 @@ textarea{min-height:84px;resize:vertical}
     </section>
   </div>
   <section id="done" class="ok" hidden>
-    <h1>Richiesta inviata!</h1>
-    <p>Grazie, ti scriviamo su WhatsApp per confermare il tavolo.</p>
+    <h1 id="dTitle">Richiesta inviata!</h1>
+    <p id="dText">Grazie, ti scriviamo su WhatsApp per confermare il tavolo.</p>
     <div class="sum" id="sum"></div>
+    <p id="waTip" hidden style="color:#d8ceb9">Ultimo passo: si apre WhatsApp, premi <b>Invia</b> per completare la prenotazione.</p>
+    <a class="btn" id="wa" hidden rel="noopener" style="display:flex;align-items:center;justify-content:center;text-decoration:none;margin-bottom:12px;background:#25d366">Completa su WhatsApp</a>
     <button class="btn" id="again">Nuova prenotazione</button>
   </section>
   <p class="foot">Black-Out · Casamassima — la prenotazione è valida dopo la nostra conferma.</p>
@@ -125,6 +127,8 @@ const GG=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sa
 const MM=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const src=({google:'Google',whatsapp:'WhatsApp',wa:'WhatsApp',instagram:'Instagram',ig:'Instagram',facebook:'Facebook',fb:'Facebook'})[(new URLSearchParams(location.search).get('da')||'').toLowerCase()]||'Sito';
+const NTFY='blackout-fxkjxsf4dm1k'; // canale notifiche (app ntfy)
+const WA_NUM='393275406999'; // numero WhatsApp del locale, es. '393331234567' (vuoto = nascosto)
 let TIMES=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'],cal={chiusoSett:[1],giorni:{}};
 const now=new Date(),today=iso(now),maxD=new Date(now);maxD.setDate(maxD.getDate()+60);const max=iso(maxD);
 let step=0,date='',time='',people=0,month=new Date(now.getFullYear(),now.getMonth(),1),morePpl=false;
@@ -168,6 +172,7 @@ $('#mNext').addEventListener('click',()=>{month=new Date(month.getFullYear(),mon
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
 $('#back').addEventListener('click',()=>go(Math.max(0,step-1)));
 go(0);
+if(WA_NUM){$('#send').textContent='CONFERMA PRENOTAZIONE';$('.info').textContent='Toccando Conferma si apre WhatsApp con la prenotazione già scritta: premi Invia per completarla.'}
 
 let fs,F;
 async function db(){if(fs)return fs;const {initializeApp}=await import(V+'firebase-app.js');F=await import(V+'firebase-firestore.js');fs=F.getFirestore(initializeApp(firebaseConfig));return fs}
@@ -186,11 +191,14 @@ $('#f').addEventListener('submit',async e=>{
   try{
     await db();
     await F.addDoc(F.collection(fs,'richieste'),{name,phone,people,date,time,notes,source:src,stato:'nuova',createdAt:F.serverTimestamp()});
-    const d=pd(date);
+    const d=pd(date),txt=`${name} · ${people} pers. · ${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]} alle ${time}${notes?' · '+notes:''} (${src})`;
+    try{fetch('https://ntfy.sh/'+NTFY+'?'+new URLSearchParams({title:'Nuova prenotazione online',tags:'bell',priority:'high',click:new URL('./',location.href).href}),{method:'POST',body:txt,mode:'no-cors'}).catch(()=>{})}catch(_){}
+    if(WA_NUM){const msg=`Ciao Black-Out! Vorrei prenotare un tavolo:\nNome: ${name}\nGiorno: ${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]}\nOrario: ${time}\nPersone: ${people}${notes?'\nNote: '+notes:''}`;
+      const u='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msg);$('#wa').href=u;$('#wa').hidden=false;$('#dTitle').textContent='Quasi fatto!';$('#dText').textContent='Grazie! Manca solo un passaggio.';$('#waTip').hidden=false;setTimeout(()=>{location.href=u},600)}
     $('#sum').innerHTML=`<b>${esc(name)}</b><br>${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]} · ${time} · ${people} ${people===1?'persona':'persone'}${notes?'<br><span style="color:#a79e8b">'+esc(notes)+'</span>':''}`;
     $('#flow').hidden=true;$('#back').disabled=true;$('#done').hidden=false;scrollTo({top:0});
   }catch(x){err.textContent='Invio non riuscito, riprova tra poco.'}
-  finally{b.disabled=false;b.textContent='INVIA LA PRENOTAZIONE'}
+  finally{b.disabled=false;b.textContent=WA_NUM?'CONFERMA PRENOTAZIONE':'INVIA LA PRENOTAZIONE'}
 });
 $('#again').addEventListener('click',()=>{$('#f').reset();date='';time='';people=0;morePpl=false;$('#done').hidden=true;$('#flow').hidden=false;go(0)});
 </script>
