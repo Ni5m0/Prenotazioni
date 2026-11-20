@@ -267,16 +267,21 @@ body{padding-bottom:96px}
 .bnav .bdg{position:absolute;top:8px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:8px;background:#e5484d;color:#fff;font-size:10px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
 .bnav .bdg:empty{min-width:10px;width:10px;height:10px;top:12px}
 .day{padding:4px 0 10px}
-.nav{gap:6px}.nav h1{font-size:clamp(22px,5.4vw,30px);cursor:pointer;flex:0 1 auto;text-align:center}
+.nav{gap:6px;flex-wrap:nowrap}.nav h1{font-size:clamp(18px,5.4vw,30px);cursor:pointer;flex:0 1 auto;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nav h1 small{display:inline;margin-left:8px;font-size:13px}
 .nav .arw{width:40px;height:40px;background:transparent;border:0;font-size:26px}
 @media(max-width:600px){.nav{justify-content:center}.brk,.pick,#todayBtn{display:none}.nav h1{flex:1}}
-.week{margin-top:8px;gap:4px}.wd{min-height:0;padding:5px 2px 6px}.wd b{font-size:16px}.wd .bar{margin:4px 6px 2px}
-.svcbar{display:flex;align-items:center;gap:10px;margin-top:10px}
-.svcchip{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 10px 0 12px;border-radius:24px;border:0;background:#fff;color:#111;font-size:17px;font-weight:700}
+.week{margin-top:8px;gap:4px}
+@media(max-width:380px){.wd i{font-size:11px}.wd b{font-size:15px}.wd .bar{margin:3px 4px 2px}.bk.row .nm{font-size:17px}.tpl{font-size:19px}.tgi{font-size:16px}}.wd{min-height:0;padding:5px 2px 6px}.wd b{font-size:16px}.wd .bar{margin:4px 6px 2px}
+.svcbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin-top:10px}
+.svcchip{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 10px 0 12px;max-width:100%;white-space:nowrap;border-radius:24px;border:0;background:#fff;color:#111;font-size:17px;font-weight:700}
 .svcchip .cvp{background:#cfe9e4;color:#0b5a4f;border-radius:10px;padding:1px 8px;font-size:16px;font-weight:800}
 .svcchip .gear{display:inline-flex;margin-left:2px;color:#333}
-.svcst{flex:1;color:#cfcbd8;font-size:13px}.svcst b.cl{color:#ff8a84}
+.svcst{order:3;flex:1 1 100%;color:#cfcbd8;font-size:14px;line-height:1.35}
+.svcbar #sumIco{margin-left:auto;flex:none}
+.svcchip{flex:0 1 auto;min-width:0}
+@media(max-width:360px){.nav h1 small{display:none}.svcchip .gear{display:none}.nav .arw{width:34px}}
+@media(max-width:380px){.svcchip{font-size:15px;gap:6px;padding:0 8px 0 10px}.svcchip .cvp{font-size:14px}.top .wrap{gap:6px}.top .ib{padding:0 8px}}.svcst b.cl{color:#ff8a84}
 .sum{display:none!important;padding:8px 0 0;grid-template-columns:1fr!important;gap:6px}
 .sum .big{font-size:26px;line-height:1}.sum .big small{font-size:14px}.sum .meter{margin-top:6px;height:6px}
 .sum .stats{display:flex;gap:6px}.sum .stats div{flex:1;padding:6px 10px;display:flex;align-items:baseline;gap:6px}.sum .stats b{font-size:18px}.sum .stats span{font-size:12px}
@@ -701,7 +706,7 @@ function render(){
   }
   renderSvc();publishOcc();
   {const st=dayState(sel),lst=forDate(sel);$('#cvPill').textContent=covers(lst)+'p';$('#svcD').textContent=fmtLong(sel);
-   {const cv=covers(lst),arr=lst.filter(b=>VISIT.has(b.status)).reduce((x,b)=>x+(+b.people||0),0);$('#svcSt').innerHTML=`<b>${cv}/${cfg.capacity}</b> coperti · ${lst.filter(active).length} pren. · ${arr} arrivati<br>${st.closed?'<b class="cl">Chiuso</b>':st.offline?'<b class="cl">online spento</b>':st.solo?'online: solo richieste':'online attivo'}`}
+   {const cv=covers(lst),arr=lst.filter(b=>VISIT.has(b.status)).reduce((x,b)=>x+(+b.people||0),0);$('#svcSt').innerHTML=`<b>${cv}/${cfg.capacity}</b> coperti · ${lst.filter(active).length} pren. · ${arr} arrivati · ${st.closed?'<b class="cl">Chiuso</b>':st.offline?'<b class="cl">online spento</b>':st.solo?'online: solo richieste':'online attivo'}`}
    $('#spBdg').hidden=!spesa.some(x=>!x.done&&isUrg(x));$('#reqBdg').hidden=!reqs.length;$('#reqBdg').textContent=reqs.length||'';
    document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav===tab));}
   if(bkId&&$('#bkSheet').classList.contains('open'))renderBk();
