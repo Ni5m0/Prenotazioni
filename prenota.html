@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prenota un tavolo · Black-Out</title>
+<meta name="description" content="Prenota un tavolo al Black-Out, Casamassima: handmade food e mixology cocktail.">
+<meta name="theme-color" content="#0d0c0a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a host at the door — quick, warm, no clutter.
+   IDEA: the step-by-step booking flow guests already know (giorno → orario → persone → dati).
+   PICTURE: the live calendar / time grid itself, under a summary pill.
+   COLOUR and TYPE: Black-Out black and gold, Archivo; condensed numerals for days and times.
+   LAYOUT: one column, max 560px, big tiles, summary pill on top. */
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:root{--bg:#0b0a08;--tile:#26231d;--tile2:#332f27;--line:#4a4436;--gold:#c6994a;--ink:#f5efe3;--mute:#a79e8b}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 Archivo,system-ui,sans-serif;min-height:100vh}
+main{max-width:560px;margin:0 auto;padding:16px 14px 48px}
+header{display:flex;align-items:center;gap:10px;min-height:56px}
+.back{width:46px;height:46px;border-radius:50%;border:0;background:#1d1a15;color:var(--ink);font-size:22px;flex:none}
+.back:disabled{visibility:hidden}
+header img{height:54px;width:auto}
+h1{font-size:26px;line-height:1.12;margin:18px 0 14px;font-stretch:88%}
+.pill{display:flex;align-items:center;justify-content:space-around;gap:4px;border:2px solid var(--line);border-radius:30px;min-height:56px;padding:4px 10px;background:#1a1712}
+.pill button{flex:1;border:0;background:transparent;color:var(--mute);font:inherit;font-weight:700;font-size:16px;min-height:44px;border-radius:22px;white-space:nowrap}
+.pill button.cur{color:var(--gold)}
+.pill button.done{color:var(--ink)}
+.pill i{width:5px;height:5px;border-radius:50%;background:var(--gold);flex:none}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px}
+.cal-h b{font-size:22px;font-stretch:90%;text-transform:capitalize}
+.cal-h button{width:44px;height:44px;border:0;background:transparent;color:var(--ink);font-size:24px}
+.cal-h button:disabled{opacity:.25}
+.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.dow{text-align:center;color:var(--mute);font-weight:600;font-size:15px;padding:6px 0}
+.day{aspect-ratio:1/1.05;border-radius:10px;border:2px solid transparent;background:var(--tile2);color:var(--ink);font:inherit;font-size:20px;font-weight:700;font-stretch:85%;padding:0}
+.day:disabled{background:#1a1813;color:#5a5446;font-weight:500}
+.day.out{visibility:hidden}
+.day.sel{border-color:var(--gold);background:#3b3221}
+.day small{display:block;font-size:10px;font-weight:600;color:#7b725f;font-stretch:100%}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.tile{min-height:62px;border-radius:12px;border:2px solid var(--line);background:var(--tile2);color:var(--ink);font:inherit;font-size:22px;font-weight:700;font-stretch:85%}
+.tile.sel{border-color:var(--gold);background:#3b3221}
+.svc{text-align:center;letter-spacing:.02em;font-weight:700;color:var(--mute);margin:20px 0 10px;font-size:16px}
+.more{display:block;margin:16px auto 0;border:0;background:transparent;color:var(--gold);font:inherit;font-weight:700;min-height:44px;padding:0 16px}
+.msg{background:#1d1a15;border-left:4px solid var(--gold);border-radius:8px;padding:12px 14px;color:var(--ink);margin-top:14px}
+form{display:grid;gap:14px;margin-top:18px}
+label{display:block;font-size:15px;font-weight:600;color:#e6dcc8}
+input,textarea{display:block;width:100%;margin-top:6px;min-height:54px;border-radius:12px;border:1px solid var(--line);background:#1a1712;color:#fff;padding:10px 14px;font:inherit;font-size:17px}
+textarea{min-height:84px;resize:vertical}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;color:var(--mute)}
+.chk input{width:22px;height:22px;min-height:0;margin:2px 0 0;flex:none;accent-color:var(--gold)}
+.info{font-size:15px;color:var(--mute);margin:0}
+.btn{width:100%;min-height:58px;border-radius:14px;border:0;background:var(--gold);color:#111;font:inherit;font-weight:800;font-size:18px;letter-spacing:.01em}
+.btn:disabled{opacity:.6}
+.err{color:#ff8a84;font-size:15px;margin:0;min-height:1.3em}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.ok{text-align:center;padding:26px 6px}
+.ok h1{margin-top:6px}
+.sum{background:#1a1712;border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0;text-align:left;font-size:18px}
+.foot{font-size:14px;color:#8d846f;text-align:center;margin-top:26px}
+@media(max-width:380px){.pill button{font-size:14px}.day{font-size:17px}.tile{font-size:19px}}
+</style>
+</head>
+<body>
+<main>
+  <header><button class="back" id="back" aria-label="Indietro" disabled>‹</button><img src="logo.png" alt="Black-Out · Handmade food & mixology cocktail"></header>
+  <div id="flow">
+    <h1 id="title">Scegli il giorno</h1>
+    <nav class="pill" aria-label="Passaggi">
+      <button data-go="0" id="pD">Giorno</button><i></i>
+      <button data-go="1" id="pT">Orario</button><i></i>
+      <button data-go="2" id="pP">Persone</button><i></i>
+      <button data-go="3" id="pF">Dati</button>
+    </nav>
+    <section id="s0">
+      <div class="cal-h"><button id="mPrev" aria-label="Mese precedente">‹</button><b id="mName"></b><button id="mNext" aria-label="Mese successivo">›</button></div>
+      <div class="grid7" id="dows"></div>
+      <div class="grid7" id="days" style="margin-top:6px"></div>
+    </section>
+    <section id="s1" hidden>
+      <p class="svc">CENA</p>
+      <div class="grid4" id="times"></div>
+      <p class="msg" id="noTimes" hidden>Per questo giorno non ci sono più orari prenotabili online. Scegli un altro giorno.</p>
+    </section>
+    <section id="s2" hidden>
+      <div class="grid4" id="ppl" style="margin-top:18px"></div>
+      <button class="more" id="pMore">+ più persone</button>
+    </section>
+    <section id="s3" hidden>
+      <form id="f" novalidate autocomplete="on">
+        <label>Nome e cognome<input id="name" name="name" autocomplete="name" required maxlength="50"></label>
+        <label>Cellulare (WhatsApp)<input id="phone" name="tel" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="es. 333 1234567"></label>
+        <label>Richiesta speciale (facoltativa)<textarea id="notes" maxlength="250" placeholder="Allergie, seggiolone, compleanno…"></textarea></label>
+        <label class="hp" aria-hidden="true">Lascia vuoto<input id="web" tabindex="-1" autocomplete="off"></label>
+        <p class="info">Ti confermiamo il tavolo su WhatsApp il prima possibile.</p>
+        <label class="chk"><input type="checkbox" id="ok"><span>Accetto che nome e numero vengano usati solo per gestire questa prenotazione.</span></label>
+        <p class="err" id="err" role="alert"></p>
+        <button class="btn" id="send">INVIA LA PRENOTAZIONE</button>
+      </form>
+    </section>
+  </div>
+  <section id="done" class="ok" hidden>
+    <h1>Richiesta inviata!</h1>
+    <p>Grazie, ti scriviamo su WhatsApp per confermare il tavolo.</p>
+    <div class="sum" id="sum"></div>
+    <button class="btn" id="again">Nuova prenotazione</button>
+  </section>
+  <p class="foot">Black-Out · Casamassima — la prenotazione è valida dopo la nostra conferma.</p>
+</main>
+<script type="module">
+import {firebaseConfig} from './firebase-config.js?v=2';
+const V='https://www.gstatic.com/firebasejs/10.12.2/';
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=s=>new Date(s+'T12:00');
+const GG=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+const MM=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const src=({google:'Google',whatsapp:'WhatsApp',wa:'WhatsApp',instagram:'Instagram',ig:'Instagram',facebook:'Facebook',fb:'Facebook'})[(new URLSearchParams(location.search).get('da')||'').toLowerCase()]||'Sito';
+let TIMES=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'],cal={chiusoSett:[1],giorni:{}};
+const now=new Date(),today=iso(now),maxD=new Date(now);maxD.setDate(maxD.getDate()+60);const max=iso(maxD);
+let step=0,date='',time='',people=0,month=new Date(now.getFullYear(),now.getMonth(),1),morePpl=false;
+
+function dayState(d){const g=cal.giorni[d]||{},wk=cal.chiusoSett.includes(pd(d).getDay());return{closed:g.chiuso!==undefined?!!g.chiuso:wk,offline:!!g.offline,off:Array.isArray(g.slotOff)?g.slotOff:[]}}
+function timesFor(d){const st=dayState(d);if(st.closed||st.offline)return[];const m=now.getHours()*60+now.getMinutes();return TIMES.filter(t=>!st.off.includes(t)&&!(d===today&&+t.slice(0,2)*60+ +t.slice(3)<m+30))}
+const dayOk=d=>d>=today&&d<=max&&timesFor(d).length>0;
+
+function renderCal(){
+  $('#mName').textContent=MM[month.getMonth()]+' '+month.getFullYear();
+  const lead=(month.getDay()+6)%7,dim=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
+  let h='';for(let i=0;i<lead;i++)h+='<button class="day out" disabled tabindex="-1"></button>';
+  for(let n=1;n<=dim;n++){const d=iso(new Date(month.getFullYear(),month.getMonth(),n)),ok=dayOk(d),st=dayState(d);
+    h+=`<button class="day${d===date?' sel':''}" data-d="${d}" ${ok?'':'disabled'} aria-label="${GG[pd(d).getDay()]} ${n} ${MM[month.getMonth()]}${ok?'':', non disponibile'}">${n}${d>=today&&d<=max&&st.closed?'<small>chiuso</small>':''}</button>`}
+  $('#days').innerHTML=h;
+  $('#mPrev').disabled=month<=new Date(now.getFullYear(),now.getMonth(),1);
+  $('#mNext').disabled=new Date(month.getFullYear(),month.getMonth()+1,1)>maxD;
+}
+function renderTimes(){const t=timesFor(date);$('#times').innerHTML=t.map(x=>`<button class="tile${x===time?' sel':''}" data-t="${x}">${x}</button>`).join('');$('#noTimes').hidden=t.length>0}
+function renderPpl(){const n=morePpl?30:8;$('#ppl').innerHTML=Array.from({length:n},(_,i)=>i+1).map(k=>`<button class="tile${k===people?' sel':''}" data-p="${k}">${k}</button>`).join('');$('#pMore').hidden=morePpl}
+const TITLES=['Scegli il giorno','Scegli l’orario','Quante persone?','I tuoi dati'];
+function go(s){
+  if(s>=1&&!date)s=0;if(s>=2&&!time)s=1;if(s>=3&&!people)s=2;
+  step=s;$('#title').textContent=TITLES[s];
+  [0,1,2,3].forEach(i=>$('#s'+i).hidden=i!==s);
+  $('#back').disabled=s===0;
+  const d=date?pd(date):null;
+  $('#pD').textContent=d?GG[d.getDay()].slice(0,3)+' '+d.getDate()+' '+MM[d.getMonth()].slice(0,3):'Giorno';
+  $('#pT').textContent=time||'Orario';$('#pP').textContent=people?people+' pers.':'Persone';
+  ['pD','pT','pP','pF'].forEach((id,i)=>{$('#'+id).className=i===s?'cur':(i<s?'done':'')});
+  if(s===0)renderCal();if(s===1)renderTimes();if(s===2)renderPpl();
+  scrollTo({top:0});
+}
+$('#dows').innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>`<div class="dow">${x}</div>`).join('');
+$('#days').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b||b.disabled)return;if(b.dataset.d!==date){date=b.dataset.d;if(!timesFor(date).includes(time))time=''}go(1)});
+$('#times').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b){time=b.dataset.t;go(2)}});
+$('#ppl').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){people=+b.dataset.p;go(3)}});
+$('#pMore').addEventListener('click',()=>{morePpl=true;renderPpl()});
+$('#mPrev').addEventListener('click',()=>{month=new Date(month.getFullYear(),month.getMonth()-1,1);renderCal()});
+$('#mNext').addEventListener('click',()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1);renderCal()});
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
+$('#back').addEventListener('click',()=>go(Math.max(0,step-1)));
+go(0);
+
+let fs,F;
+async function db(){if(fs)return fs;const {initializeApp}=await import(V+'firebase-app.js');F=await import(V+'firebase-firestore.js');fs=F.getFirestore(initializeApp(firebaseConfig));return fs}
+db().then(async()=>{const s=await F.getDoc(F.doc(fs,'pubblico/calendario'));if(s.exists()){const d=s.data();if(Array.isArray(d.chiusoSett))cal.chiusoSett=d.chiusoSett.map(Number);if(d.giorni&&typeof d.giorni==='object')cal.giorni=d.giorni;if(Array.isArray(d.orari)&&d.orari.length)TIMES=d.orari.map(String)}if(step===0)renderCal()}).catch(()=>{});
+
+$('#f').addEventListener('submit',async e=>{
+  e.preventDefault();const err=$('#err');err.textContent='';
+  const name=$('#name').value.trim().replace(/\s+/g,' '),phone=$('#phone').value.trim(),notes=$('#notes').value.trim();
+  if($('#web').value)return;
+  if(!date||!time||!people)return go(0);
+  if(!timesFor(date).includes(time)){err.textContent='Questo orario non è più disponibile: scegline un altro.';return}
+  if(name.length<2)return err.textContent='Scrivi il tuo nome.';
+  if(phone.replace(/\D/g,'').length<8)return err.textContent='Scrivi un numero di cellulare valido.';
+  if(!$('#ok').checked)return err.textContent='Spunta il consenso per inviare la prenotazione.';
+  const b=$('#send');b.disabled=true;b.textContent='INVIO…';
+  try{
+    await db();
+    await F.addDoc(F.collection(fs,'richieste'),{name,phone,people,date,time,notes,source:src,stato:'nuova',createdAt:F.serverTimestamp()});
+    const d=pd(date);
+    $('#sum').innerHTML=`<b>${esc(name)}</b><br>${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]} · ${time} · ${people} ${people===1?'persona':'persone'}${notes?'<br><span style="color:#a79e8b">'+esc(notes)+'</span>':''}`;
+    $('#flow').hidden=true;$('#back').disabled=true;$('#done').hidden=false;scrollTo({top:0});
+  }catch(x){err.textContent='Invio non riuscito, riprova tra poco.'}
+  finally{b.disabled=false;b.textContent='INVIA LA PRENOTAZIONE'}
+});
+$('#again').addEventListener('click',()=>{$('#f').reset();date='';time='';people=0;morePpl=false;$('#done').hidden=true;$('#flow').hidden=false;go(0)});
+</script>
+</body>
+</html>

@@ -154,6 +154,27 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
 .qhd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 8px}
 .qhd b{font-size:16px}
 .ro .quick{display:none}
+.svc{border-radius:14px;background:var(--panel);padding:12px 14px;margin-top:14px}
+.svc .hd{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.svc .st{font-weight:800;margin-right:auto}
+.svc .st.cl{color:#d93a2b}.svc .st.op{color:var(--ok)}
+.svc button{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-weight:700;font-size:14px}
+.svc button.dang{border-color:#d93a2b;color:#d93a2b}
+.svc .sl{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.svc .sl button{border-radius:18px;min-height:36px}
+.svc .sl button.off{opacity:.55;text-decoration:line-through}
+.svc small{display:block;color:var(--mute);font-size:13px;margin-top:8px}
+.wd.cl{opacity:.45}
+.ro .svc button{display:none}
+.wdays{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.wdays label{display:flex;align-items:center;gap:6px;font-weight:600;font-size:14px;border:1px solid var(--line);border-radius:18px;padding:6px 10px}
+.wdays input{width:20px;height:20px;min-height:0;margin:0;accent-color:var(--acc)}
+.req{border:2px solid var(--acc);border-radius:16px;padding:14px;margin-top:16px}
+.req h2{margin:0 0 8px;font-size:18px}
+.req .bk{background:var(--panel);border-left-color:var(--acc)}
+.req .acts a,.req .acts button{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;color:var(--ink);text-decoration:none}
+.req .acts a.ok{background:var(--acc);border-color:var(--acc);color:#111}
+.req .wait{font-size:12px;font-weight:700;color:var(--warn)}
 #login{position:fixed;inset:0;z-index:50;background:#0d0c0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px}
 #login form{width:100%;max-width:360px;display:grid;gap:12px}
 #login img{width:240px;max-width:80%;margin:0 auto 10px;display:block}
@@ -203,7 +224,9 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
       <div><b id="sF">0</b><span>posti liberi</span></div>
     </div>
   </section>
+  <section class="svc" id="svc"></section>
   <div class="tabs" role="tablist"><button data-tab="list" class="on">Prenotazioni</button><button data-tab="sala">Sala e tavoli</button></div>
+  <section class="req" id="req" hidden></section>
   <div class="quick" id="quick">
     <h2>Inserimento veloce</h2>
     <form class="qrow" id="qf" autocomplete="off">
@@ -211,7 +234,7 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
       <button class="btn pri" type="submit" id="qGo" style="flex:none">Inserisci</button>
       <label class="btn shot" id="shotBtn" hidden>Da screenshot<input type="file" id="qShot" accept="image/*" multiple hidden></label>
     </form>
-    <p class="qmsg" id="qMsg">Anche più prenotazioni insieme, separate da “;” o una per riga. Note tra parentesi, es: 2p 20:45 Vurro oggi thefork (sedia per bimba). Il tavolo lo propone il gestionale.</p>
+    <p class="qmsg" id="qMsg">Anche più prenotazioni insieme, separate da “;” o una per riga. Note tra parentesi, es: 2p 20:45 Vurro oggi tf 50 (sedia per bimba). Il tavolo lo propone il gestionale.</p>
     <div id="qOut"></div>
   </div>
   <input class="search" id="q" type="search" placeholder="Cerca per nome, telefono o nota…" autocomplete="off">
@@ -257,6 +280,10 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
       <label>Minuti per riapparecchiare<input id="sBuf" type="number" min="0" step="5" inputmode="numeric"></label>
       <label>Capotavola se serve (stretti)<input id="sHeads" type="number" min="0" max="2" inputmode="numeric"></label>
     </div>
+    <h2 class="sec">Apertura e prenotazioni online</h2>
+    <span class="lbl">Giorni di chiusura</span>
+    <div class="wdays" id="sWdays"></div>
+    <label style="margin-top:12px">Orari prenotabili dai clienti (separati da virgola)<input id="sOrari" placeholder="19:00, 19:30, 20:00 …"></label>
     <h2 class="sec">Tavoli</h2>
     <p class="hint" style="margin-top:0"><b>Posti</b> = posti comodi del tavolo così com'è montato (es. T1 = 3 tavolini 60×60 = 6). I tavoli <b>unibili</b> della stessa <b>fila</b>, vicini nell'ordine dell'elenco, si uniscono sommando i posti. Il capotavola si usa solo se non c'è altro modo.</p>
     <div class="ted hd"><span>Nome</span><span>Fila / zona</span><span>Posti</span><span>Unibile</span><span></span></div>
@@ -281,7 +308,7 @@ const GG=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sa
 const MM=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
 const fmtLong=s=>{const d=parse(s);return GG[d.getDay()]+' '+d.getDate()+' '+MM[d.getMonth()]};
 const fmtShort=s=>{const d=parse(s);return GG[d.getDay()].slice(0,3)+' '+d.getDate()+' '+MM[d.getMonth()].slice(0,3)};
-const SRC=['Telefono','WhatsApp','TheFork','Instagram','Facebook','Di persona','Altro'];
+const SRC=['Telefono','WhatsApp','TheFork','Google','Sito','Instagram','Facebook','Di persona','Altro'];
 const ST={confermata:'',arrivata:'Arrivato',noshow:'No-show',cancellata:'Cancellata'};
 const today=iso(new Date());
 const winStart=addDays(today,-60);
@@ -353,7 +380,7 @@ function card(b,showDate,P){
   return `<article class="bk st-${esc(st)}" data-id="${esc(b.id)}">
   <div class="pp"><b>${esc(b.people)}</b><small>pers.</small></div>
   <div class="info"><h3>${esc(b.name)}${b.sconto?`<span class="tag sc">${esc(b.sconto)}</span>`:''}${ST[st]?`<span class="tag">${ST[st]}</span>`:''}</h3>
-  <p class="meta">${showDate?esc(fmtShort(b.date)+' · '+b.time)+' · ':''}${tl?'Tavolo '+tl+' · ':''}${esc(b.source||'')}</p>
+  <p class="meta">${showDate?esc(fmtShort(b.date)+' · '+b.time)+' · ':''}${tl?'Tavolo '+tl+' · ':''}${esc(b.source==='TheFork'?'TF':b.source||'')}</p>
   ${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}
   ${b.phone?`<p class="ph"><a href="tel:${esc(String(b.phone).replace(/[^\d+]/g,''))}">${esc(b.phone)}</a> · <a href="${esc(waLink(b))}" target="_blank" rel="noopener">WhatsApp</a></p>`:''}</div>
   <div class="acts"><button data-act="arr" class="${st==='arrivata'?'on':''}">Arrivato</button><button data-act="ns" class="${st==='noshow'?'on':''}">No-show</button><button data-act="edit">Modifica</button></div>
@@ -365,7 +392,7 @@ function render(){
   const d=parse(sel),mon=addDays(sel,-((d.getDay()+6)%7));
   $('#week').innerHTML=Array.from({length:7},(_,i)=>{
     const day=addDays(mon,i),c=covers(forDate(day)),pc=Math.min(100,c/cfg.capacity*100);
-    return `<button class="wd${day===sel?' on':''}${day===today?' td':''}" data-d="${day}" aria-label="${esc(fmtLong(day))}, ${c} coperti"><i>${GG[parse(day).getDay()].slice(0,3)}</i><b>${parse(day).getDate()}</b><div class="bar"><span style="width:${pc}%"></span></div><i>${c||'–'}</i></button>`;
+    const dc=dayState(day).closed;return `<button class="wd${day===sel?' on':''}${day===today?' td':''}${dc?' cl':''}" data-d="${day}" aria-label="${esc(fmtLong(day))}, ${c} coperti"><i>${GG[parse(day).getDay()].slice(0,3)}</i><b>${parse(day).getDate()}</b><div class="bar"><span style="width:${pc}%"></span></div><i>${dc&&!c?'chiuso':c||'–'}</i></button>`;
   }).join('');
   const list=forDate(sel),cv=covers(list);
   $('#cv').textContent=cv;$('#cap').textContent=cfg.capacity;
@@ -375,7 +402,7 @@ function render(){
   $('#sA').textContent=list.filter(b=>b.status==='arrivata').reduce((s,b)=>s+(+b.people||0),0);
   $('#sF').textContent=Math.max(0,cfg.capacity-cv);
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
-  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#sala').hidden=tab!=='sala';
+  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#req').hidden=tab!=='list'||!reqs.length;$('#sala').hidden=tab!=='sala';
   const L=$('#list');
   if(!ready){L.innerHTML='<p class="empty">Caricamento prenotazioni…</p>';return}
   if(q){
@@ -386,11 +413,35 @@ function render(){
     L.innerHTML=res.length?`<p class="lbl">${res.length} risultati (ultimi 60 giorni e futuri)</p>`+res.map(b=>card(b,true,pf(b.date))).join(''):'<p class="empty">Nessuna prenotazione trovata.</p>';
     return;
   }
-  const P=plan(sel);renderSala(P,list);
+  renderSvc();
+  const P=plan(sel);renderSala(P,list);if(reqs.length)renderReq();
   if(!list.length){L.innerHTML='<p class="empty">Nessuna prenotazione per questo giorno.<br>Tocca “+ Nuova prenotazione” per aggiungerne una.</p>';return}
   const groups=new Map();for(const b of list){if(!groups.has(b.time))groups.set(b.time,[]);groups.get(b.time).push(b)}
   L.innerHTML=[...groups].map(([t,g])=>`<section class="turn"><div class="tm">${esc(t||'—')}<small>${covers(g)} coperti</small></div><div>${g.map(b=>card(b,false,P)).join('')}</div></section>`).join('');
 }
+/* ---- servizio: chiusure e online ---- */
+const DEF_ORARI=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'];
+let cal={chiusoSett:[1],orari:DEF_ORARI,giorni:{}};
+function dayState(d){const g=cal.giorni[d]||{},weekly=cal.chiusoSett.includes(parse(d).getDay());return{weekly,closed:g.chiuso!==undefined?!!g.chiuso:weekly,offline:!!g.offline,slotOff:Array.isArray(g.slotOff)?g.slotOff:[]}}
+async function saveCal(next){
+  if(!db)return toast('Sincronizzazione non disponibile');
+  const giorni={};for(const[k,v]of Object.entries(next.giorni||{}))if(k>=today&&v&&(v.chiuso!==undefined||v.offline||(v.slotOff&&v.slotOff.length)))giorni[k]=v;
+  try{await db.doc('pubblico/calendario').set({chiusoSett:next.chiusoSett,orari:next.orari,giorni})}catch(e){toast(errMsg(e))}
+}
+function setDay(d,patch){const g={...(cal.giorni[d]||{}),...patch};for(const k in g)if(g[k]===null)delete g[k];return saveCal({...cal,giorni:{...cal.giorni,[d]:g}})}
+function renderSvc(){
+  const S=$('#svc'),st=dayState(sel),wd=GG[parse(sel).getDay()].toLowerCase();
+  if(st.closed){S.innerHTML=`<div class="hd"><span class="st cl">Servizio chiuso${st.weekly&&cal.giorni[sel]?.chiuso===undefined?' ('+wd+')':''}</span><button data-sv="open">Riapri servizio</button></div><small>I clienti non possono prenotare online per questo giorno.</small>`;return}
+  S.innerHTML=`<div class="hd"><span class="st op">Aperto · online ${st.offline?'spento':'attivo'}</span><button data-sv="online">${st.offline?'Attiva online':'Disattiva online'}</button><button class="dang" data-sv="close">Chiudi servizio</button></div>`+
+   (st.offline?'<small>I clienti non possono prenotare online per questo giorno.</small>':`<div class="sl">${cal.orari.map(t=>`<button data-slot="${esc(t)}" class="${st.slotOff.includes(t)?'off':''}" aria-pressed="${!st.slotOff.includes(t)}">${esc(t)}</button>`).join('')}</div><small>Orari prenotabili online: tocca un orario per spegnerlo o riaccenderlo.</small>`);
+}
+$('#svc').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const st=dayState(sel);
+  if(b.dataset.sv==='open')setDay(sel,{chiuso:st.weekly?false:null});
+  else if(b.dataset.sv==='close')setDay(sel,{chiuso:st.weekly?null:true});
+  else if(b.dataset.sv==='online')setDay(sel,{offline:st.offline?null:true});
+  else if(b.dataset.slot){const t=b.dataset.slot,off=st.slotOff.includes(t)?st.slotOff.filter(x=>x!==t):[...st.slotOff,t];setDay(sel,{slotOff:off.length?off:null})}
+});
 function renderSala(P,list){
   const S=$('#sala');
   if(!list.filter(active).length){S.innerHTML='<p class="empty">Nessuna prenotazione attiva per questo giorno.</p>';return}
@@ -425,7 +476,7 @@ const getB=id=>all.get(id)||old.get(id);
 function errMsg(e){return e&&e.code==='invalid_argument'?'Non hai i permessi per modificare':e&&e.code==='quota_exceeded'?'Spazio esaurito: elimina prenotazioni vecchie':'Errore di salvataggio, riprova'}
 
 /* ---- form ---- */
-$('#fSource').innerHTML=SRC.map(s=>`<option>${s}</option>`).join('');
+$('#fSource').innerHTML=SRC.map(s=>`<option value="${s}">${s==='TheFork'?'TF (TheFork)':s}</option>`).join('');
 function chips(){const t=$('#fTime').value;$('#fTurni').innerHTML=cfg.turni.map(x=>`<button type="button" data-t="${esc(x)}" class="${x===t?'on':''}">${esc(x)}</button>`).join('')}
 function tchips(){$('#fTables').innerHTML=cfg.tables.map(t=>`<button type="button" data-tb="${esc(t.id)}" class="${fSel.has(t.id)?'on':''}">${esc(t.id)}</button>`).join('')}
 function hint(){
@@ -435,6 +486,7 @@ function hint(){
   const tot=covers(others)+(['cancellata','noshow'].includes(st)?0:p);
   let html=`Con questa: ${tot} / ${cfg.capacity} coperti in giornata`+(tot>cfg.capacity?' — oltre la capienza':'');
   let bad=tot>cfg.capacity;
+  if(dayState(d).closed){html='<b>Attenzione: giorno di chiusura.</b><br>'+html;bad=true}
   if(time&&!['cancellata','noshow'].includes(st)){
     const ex={id:editing||'__new',name:$('#fName').value.trim()||'Nuova',people:p,time,date:d,status:st,tables:[...fSel]};
     const P=plan(d,ex),a=P.as.get(ex.id);
@@ -451,7 +503,7 @@ function hint(){
 $('#fHint').addEventListener('click',e=>{const b=e.target.closest('[data-sug]');if(b){$('#fTime').value=b.dataset.sug;fSel.clear();tchips();chips();hint()}});
 $('#fTables').addEventListener('click',e=>{const b=e.target.closest('[data-tb]');if(!b)return;const id=b.dataset.tb;fSel.has(id)?fSel.delete(id):fSel.add(id);tchips();hint()});
 function openForm(id,pre){
-  editing=id||null;delArmed=false;if(!pre)qEdit=null;
+  editing=id||null;delArmed=false;if(!pre){qEdit=null;rEdit=null}
   const b=id?getB(id):{name:'',phone:'',people:2,date:sel,time:cfg.turni[0]||'20:00',table:'',source:'Telefono',status:'confermata',notes:'',...(pre||{})};
   $('#fTitle').textContent=id?'Modifica prenotazione':'Nuova prenotazione';
   $('#fName').value=b.name||'';$('#fPhone').value=b.phone||'';$('#fPeople').value=b.people||2;$('#fDate').value=b.date||sel;$('#fTime').value=b.time||'';
@@ -480,6 +532,7 @@ $('#form').addEventListener('submit',async e=>{
     if(editing){data.createdAt=getB(editing)?.createdAt||now;await db.doc('bookings/'+editing).set(data)}
     else{data.createdAt=now;await db.collection('bookings').add(data)}
     if(!editing&&qEdit){pending=pending.filter(x=>x!==qEdit);qEdit=null;renderQ()}
+    if(!editing&&rEdit){try{await db.doc('richieste/'+rEdit.id).update({stato:'confermata'})}catch(e){}rEdit=null}
     closeAll();toast('Prenotazione salvata');go(date);if(date<winStart)loadOld(date);
   }catch(err){toast(errMsg(err))}finally{btn.disabled=false}
 });
@@ -523,7 +576,7 @@ $('#sTables').addEventListener('click',e=>{const r=e.target.closest('[data-i]');
   if(e.target.closest('[data-rm]')){draft.splice(i,1);ted()}
   const m=e.target.closest('[data-mv]');if(m){const j=i+ +m.dataset.mv;if(j>=0&&j<draft.length){[draft[i],draft[j]]=[draft[j],draft[i]];ted()}}});
 $('#sAdd').addEventListener('click',()=>{const l=draft[draft.length-1];draft.push({id:'T'+(draft.length+1),fila:l?l.fila:'Sala',solo:2,join:true});ted()});
-$('#setBtn').addEventListener('click',()=>{$('#sCap').value=cfg.capacity;$('#sTurni').value=cfg.turni.join(', ');$('#sDur').value=cfg.dur;$('#sDurSab').value=cfg.durSab;$('#sBuf').value=cfg.buffer;$('#sHeads').value=cfg.heads;draft=cfg.tables.map(t=>({...t}));ted();$('#setSheet').classList.add('open')});
+$('#setBtn').addEventListener('click',()=>{$('#sCap').value=cfg.capacity;$('#sTurni').value=cfg.turni.join(', ');$('#sDur').value=cfg.dur;$('#sDurSab').value=cfg.durSab;$('#sBuf').value=cfg.buffer;$('#sHeads').value=cfg.heads;draft=cfg.tables.map(t=>({...t}));ted();$('#sWdays').innerHTML=[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" value="${i}" ${cal.chiusoSett.includes(i)?'checked':''}>${GG[i].slice(0,3)}</label>`).join('');$('#sOrari').value=cal.orari.join(', ');$('#setSheet').classList.add('open')});
 $('#setForm').addEventListener('submit',async e=>{
   e.preventDefault();if(!db)return toast('Sincronizzazione non disponibile');
   const capacity=Math.max(1,+$('#sCap').value||72);
@@ -531,7 +584,46 @@ $('#setForm').addEventListener('submit',async e=>{
   const tables=draft.map(t=>({id:String(t.id).trim(),fila:String(t.fila||'').trim(),solo:Math.max(1,+t.solo||1),join:!!t.join})).filter(t=>t.id);
   if(new Set(tables.map(t=>t.id)).size!==tables.length)return toast('Ci sono due tavoli con lo stesso nome');
   if(!tables.length)return toast('Aggiungi almeno un tavolo');
+  const orari=[...new Set($('#sOrari').value.split(/[,;\s]+/).map(x=>x.replace('.',':')).filter(x=>/^\d{1,2}:\d{2}$/.test(x)).map(x=>x.padStart(5,'0')))].sort((a,b)=>toMin(a)-toMin(b));
+  const chiusoSett=[...document.querySelectorAll('#sWdays input:checked')].map(x=>+x.value);
+  await saveCal({...cal,chiusoSett,orari:orari.length?orari:DEF_ORARI});
   try{await db.doc('config/settings').set({capacity,turni:turni.length?turni:cfg.turni,dur:Math.max(30,+$('#sDur').value||90),durSab:Math.max(30,+$("#sDurSab").value||70),buffer:Math.max(0,+$('#sBuf').value||0),heads:Math.max(0,+$('#sHeads').value||0),tables});closeAll();toast('Impostazioni salvate')}catch(err){toast(errMsg(err))}
+});
+
+/* ---- richieste dal sito ---- */
+let reqs=[],rEdit=null;
+const waTo=(phone,msg)=>{let d=String(phone||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);else if(d.length<=10&&d.startsWith('3'))d='39'+d;return 'https://wa.me/'+d+'?text='+encodeURIComponent(msg)};
+function freeTimes(r){const c=new Set(cfg.turni);for(let v=1140;v<=1350;v+=30)c.add(hm(v));return [...c].sort((x,y)=>toMin(x)-toMin(y)).filter(t=>t!==r.time&&plan(r.date,{...r,id:'__r',time:t,status:'confermata',tables:[]}).as.has('__r')).slice(0,4)}
+function renderReq(){
+  const S=$('#req');S.hidden=tab!=='list'||!reqs.length;if(!reqs.length){S.innerHTML='';return}
+  const list=[...reqs].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  S.innerHTML=`<h2>Richieste online (${list.length})</h2>`+list.map(r=>{
+    const ex={...r,id:'__r',status:'confermata',tables:[]},a=plan(r.date,ex).as.get('__r');
+    const giorno=fmtLong(r.date).toLowerCase(),alt=a?[]:freeTimes(r);
+    const okMsg=`Ciao ${r.name}, ti confermiamo il tavolo al Black-Out per ${r.people} ${+r.people===1?'persona':'persone'} ${giorno} alle ${r.time}. Ti aspettiamo!`;
+    const altMsg=`Ciao ${r.name}, ${giorno} alle ${r.time} siamo al completo per ${r.people} persone. `+(alt.length?`Possiamo offrirti un tavolo alle ${alt.join(', alle ')}. Quale preferisci?`:'Possiamo provare un altro giorno?');
+    const noMsg=`Ciao ${r.name}, ci dispiace ma ${giorno} siamo al completo. Speriamo di vederti presto al Black-Out!`;
+    return `<article class="bk" data-rid="${esc(r.id)}"><div class="pp"><b>${esc(r.people)}</b><small>pers.</small></div><div class="info"><h3>${esc(r.name)}${r.stato==='attesa'?' <span class="wait">alternativa inviata</span>':''}</h3>
+    <p class="meta">${esc(fmtLong(r.date))} · ${esc(r.time)} · ${esc(r.source||'Sito')} · ${esc(r.phone)}</p>
+    <p class="meta">${a?`Tavolo libero: <span class="tbl">${esc(a.ids.join('+'))}</span>${a.tight?' · stretti':''}`:`<span class="nt">Pieno a quest'ora</span>${alt.length?' · liberi: '+alt.join(', '):''}`}</p>
+    ${r.notes?`<p class="note">${esc(r.notes)}</p>`:''}</div>
+    <div class="acts"><a class="ok" data-r="ok" href="${esc(waTo(r.phone,okMsg))}" target="_blank" rel="noopener">Conferma + WhatsApp</a><button data-r="edit">Modifica</button><a data-r="alt" href="${esc(waTo(r.phone,altMsg))}" target="_blank" rel="noopener">Proponi altro orario</a><a data-r="no" href="${esc(waTo(r.phone,noMsg))}" target="_blank" rel="noopener">Rifiuta</a></div></article>`}).join('');
+}
+async function confirmReq(r,data){
+  const now=new Date().toISOString();
+  await db.collection('bookings').add({name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,tables:[],source:r.source||'Sito',status:'confermata',notes:r.notes||'',sconto:'',createdAt:now,updatedAt:now,...(data||{})});
+  await db.doc('richieste/'+r.id).update({stato:'confermata'});
+}
+$('#req').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-r]');if(!b||!db)return;
+  const r=reqs.find(x=>x.id===b.closest('[data-rid]').dataset.rid);if(!r)return;
+  const k=b.dataset.r;
+  try{
+    if(k==='ok'){await confirmReq(r);toast('Prenotazione confermata');}
+    else if(k==='edit'){rEdit=r;openForm(null,{name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,notes:r.notes||'',source:SRC.includes(r.source)?r.source:'Sito'});qEdit=null;rEdit=r}
+    else if(k==='alt'){await db.doc('richieste/'+r.id).update({stato:'attesa'})}
+    else if(k==='no'){await db.doc('richieste/'+r.id).update({stato:'rifiutata'});toast('Richiesta rifiutata')}
+  }catch(err){toast(errMsg(err))}
 });
 
 /* ---- inserimento veloce ---- */
@@ -603,7 +695,7 @@ function renderQ(){
     const a=!miss&&P.get(x.date).as.get(x._id);
     const dup=forDate(x.date).some(b=>active(b)&&norm(String(b.name)).includes(norm(x.name).split(' ')[0]));
     const tl=miss?`<span class="warnl">${miss}</span>`:a?`Tavolo proposto <span class="tbl">${esc(a.ids.join('+'))}</span>${a.tight?' · stretti, con capotavola':''}`:'<span class="warnl">Nessun tavolo libero: overbooking</span>';
-    return `<article class="bk qk" data-qi="${i}"><div class="pp"><b>${esc(x.people||'?')}</b><small>pers.</small></div><div class="info"><h3>${esc(x.name||'Senza nome')}${x.sconto?`<span class="tag sc">${esc(x.sconto)}</span>`:''}</h3><p class="meta">${esc(fmtLong(x.date))} · ${esc(x.time||'--:--')} · ${esc(x.source)}${x.phone?' · '+esc(x.phone):''}</p><p class="meta">${tl}</p>${x.notes?`<p class="note">${esc(x.notes)}</p>`:''}${dup?'<p class="meta warnl">Attenzione: c\'è già una prenotazione con questo nome quel giorno</p>':''}</div><div class="acts">${miss?'':`<button data-q="save">${a?'Salva':'Salva comunque'}</button>`}<button data-q="edit">Modifica</button><button data-q="del">Scarta</button></div></article>`}).join('');
+    return `<article class="bk qk" data-qi="${i}"><div class="pp"><b>${esc(x.people||'?')}</b><small>pers.</small></div><div class="info"><h3>${esc(x.name||'Senza nome')}${x.sconto?`<span class="tag sc">${esc(x.sconto)}</span>`:''}</h3><p class="meta">${esc(fmtLong(x.date))} · ${esc(x.time||'--:--')} · ${esc(x.source==='TheFork'?'TF':x.source)}${x.phone?' · '+esc(x.phone):''}</p><p class="meta">${tl}</p>${x.notes?`<p class="note">${esc(x.notes)}</p>`:''}${dup?'<p class="meta warnl">Attenzione: c\'è già una prenotazione con questo nome quel giorno</p>':''}</div><div class="acts">${miss?'':`<button data-q="save">${a?'Salva':'Salva comunque'}</button>`}<button data-q="edit">Modifica</button><button data-q="del">Scarta</button></div></article>`}).join('');
 }
 async function saveQ(x){
   const now=new Date().toISOString();
@@ -637,6 +729,8 @@ render();
     if(!s.metadata.fromCache){clearTimeout(timer);setSync('ok','Sincronizzato');banner('')}
     render();
   },err=>{clearTimeout(timer);ready=true;setSync('err','Errore');banner('Collegamento interrotto ('+err.code+'). Ricarica la pagina.');render()});
+  db.doc('pubblico/calendario').onSnapshot(s=>{if(s.exists){const d=s.data();cal={chiusoSett:Array.isArray(d.chiusoSett)?d.chiusoSett.map(Number):[1],orari:Array.isArray(d.orari)&&d.orari.length?d.orari.map(String):DEF_ORARI,giorni:d.giorni&&typeof d.giorni==='object'?d.giorni:{}}}render()},()=>{});
+  db.collection('richieste').where('stato','in',['nuova','attesa']).onSnapshot(s=>{reqs=s.docs.map(d=>({id:d.id,...d.data()}));renderReq()},()=>{});
   db.doc('config/settings').onSnapshot(s=>{
     if(s.exists){const d=s.data();cfg={capacity:+d.capacity||72,turni:Array.isArray(d.turni)&&d.turni.length?d.turni.map(String):cfg.turni,dur:+d.dur||90,durSab:+d.durSab||70,buffer:Number.isFinite(+d.buffer)?+d.buffer:10,heads:Number.isFinite(+d.heads)?+d.heads:1,
       tables:Array.isArray(d.tables)&&d.tables.length?d.tables.map(t=>({id:String(t.id),fila:String(t.fila||''),solo:+t.solo||1,join:t.join!==undefined?!!t.join:+t.lati>0})):DEF_TABLES}}
