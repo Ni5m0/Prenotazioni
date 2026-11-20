@@ -636,7 +636,7 @@ render();
 }
 </script>
 <script type="module">
-import {firebaseConfig} from './firebase-config.js';
+import {firebaseConfig} from './firebase-config.js?v=2';
 const V='https://www.gstatic.com/firebasejs/10.12.2/';
 const {initializeApp}=await import(V+'firebase-app.js');
 const A=await import(V+'firebase-auth.js');
@@ -663,7 +663,7 @@ document.getElementById('lf').addEventListener('submit',async e=>{
   e.preventDefault();const b=document.getElementById('lBtn');b.disabled=true;err.textContent='Accesso…';
   let u=document.getElementById('lUser').value.trim().toLowerCase();if(!u.includes('@'))u+='@blackout.app';
   try{await A.signInWithEmailAndPassword(auth,u,document.getElementById('lPass').value)}
-  catch(x){err.textContent=x.code==='auth/too-many-requests'?'Troppi tentativi, riprova tra qualche minuto.':x.code==='auth/network-request-failed'?'Nessuna connessione.':'Utente o password sbagliati.'}
+  catch(x){const c=x&&x.code||'';err.textContent=(c==='auth/too-many-requests'?'Troppi tentativi, riprova tra qualche minuto.':c==='auth/network-request-failed'?'Nessuna connessione.':c==='auth/operation-not-allowed'?'Accesso Email/Password non attivo su Firebase.':/api-key|configuration|project/.test(c)?'Configurazione Firebase non valida.':(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found'||c==='auth/invalid-email')?'Utente o password sbagliati.':'Errore di accesso.')+(c?' ('+c+')':'')}
   finally{b.disabled=false}
 });
 document.getElementById('outBtn').addEventListener('click',()=>A.signOut(auth));
