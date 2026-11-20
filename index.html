@@ -85,6 +85,7 @@ button{cursor:pointer}
 .empty{padding:36px 0;text-align:center;color:var(--mute)}
 .fab{position:fixed;right:max(4vw,16px);bottom:max(20px,env(safe-area-inset-bottom));z-index:6;min-height:58px;padding:0 24px;border-radius:30px;border:0;background:var(--acc);color:var(--accInk);font-weight:800;font-size:17px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .ro .fab,.ro .acts,.ro #setBtn{display:none}
+.staff .own,.staff .spi .dv,.staff .qa-items button small,.staff #spWa,.staff #logBtn,.staff #setBtn,.staff #svc button,.staff #fDel,.staff #cDel{display:none!important}
 .sheet{position:fixed;inset:0;z-index:10;background:rgba(10,8,14,.55);display:none;align-items:flex-end;justify-content:center}
 .sheet.open{display:flex}
 .panel{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px max(4vw,16px) 24px}
@@ -113,7 +114,37 @@ textarea{resize:vertical;min-height:70px}
 .tabs{display:flex;gap:4px;margin-top:18px;border-bottom:2px solid var(--ink)}
 .tabs button{min-height:46px;padding:0 18px;border:0;background:transparent;font-weight:700;border-radius:10px 10px 0 0;font-size:16px}
 .tabs button.on{background:var(--ink);color:var(--bg)}
-@media(max-width:600px){.tabs button{padding:0 12px;font-size:15px}}
+.tabs{overflow-x:auto;scrollbar-width:none}.tabs button{flex:none}
+@media(max-width:600px){.tabs button{padding:0 11px;font-size:15px}}
+.spc h3{margin:18px 0 6px;font-size:15px;color:var(--mute);font-weight:700}
+.spi{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--panel);margin-bottom:6px}
+.spi input{width:26px;height:26px;flex:none;accent-color:var(--acc);margin:0}
+.spi span{flex:1;font-size:17px;font-weight:600}.spi small{color:var(--mute);font-weight:500;margin-left:6px}
+.spi.done span{text-decoration:line-through;opacity:.5}
+.qa{margin-top:16px;background:var(--panel);border-radius:16px;padding:12px}
+.qa-h{margin:0 0 8px;font-weight:800}
+.qa-cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}.qa-cats button{flex:none;min-height:44px;padding:0 16px;border-radius:22px;border:1px solid var(--line);background:var(--bg);font-weight:800;font-size:15px}.qa-cats button.on{background:var(--ink);color:var(--bg)}
+.qa-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:10px;max-height:300px;overflow-y:auto;padding:2px}
+.qa-items button{min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-weight:700;font-size:15px;text-align:left;padding:6px 10px;line-height:1.2;position:relative}
+.qa-items button small{display:block;font-size:11px;font-weight:700;color:var(--mute);margin-top:2px}
+.qa-items button.in{border:2px solid var(--acc)}.qa-items button.in::after{content:"in lista";position:absolute;top:4px;right:6px;font-size:10px;color:var(--acc);font-weight:800}
+.qa-items button.urg{border-color:#d93a2b}.qa-items button.urg::after{content:"urgente";color:#d93a2b}
+.qa-items .new{border-style:dashed;color:var(--mute)}
+.qa-q{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.qa-q button{min-height:38px;padding:0 12px;border-radius:19px;border:1px solid var(--line);background:var(--bg);font-weight:700}
+.qa-man{margin-top:12px}.qa-man summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.spf{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.spf button{min-height:38px;padding:0 14px;border-radius:19px;border:1px solid var(--line);background:var(--bg);font-weight:700}.spf button.on{background:var(--ink);color:var(--bg)}
+.spi .dv{font-style:normal;font-size:11px;font-weight:800;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px;background:#e0ecff;color:#1d4ea6;white-space:nowrap;display:inline-block}.spi .dv.cash{background:#ffe9cc;color:#8a4b00}
+.spi .nt{font-style:normal;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px;background:var(--bg);border:1px solid var(--line);color:var(--mute);display:inline-block}
+.spi .by{display:block;font-size:12px;color:var(--mute);font-weight:500;margin-top:2px}
+.imp li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);list-style:none}.imp{padding:0;margin:10px 0 0}.imp input{width:22px;height:22px;min-height:0;margin:2px 0 0;accent-color:var(--acc)}.imp small{display:block;color:var(--mute);font-size:13px}
+.spu{display:flex;align-items:center;gap:8px;min-height:50px;padding:0 12px;border-radius:12px;border:1px solid #d93a2b;color:#d93a2b;font-weight:700;font-size:15px;flex:none}
+.spu input{width:22px;height:22px;min-height:0;margin:0;accent-color:#d93a2b}
+.spi.urg{background:light-dark(#fdeceb,#3a1615);box-shadow:inset 4px 0 0 #d93a2b}
+.spi .u{white-space:nowrap;display:inline-block;background:#d93a2b;color:#fff;font-size:11px;font-weight:800;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.spi .buy{display:block;font-size:13px;font-weight:600;color:var(--mute);margin:2px 0 0}.spi .buy b{color:var(--ink)}
+.spi .ub{font-size:13px;font-weight:800;color:#d93a2b;border:1px solid #d93a2b;border-radius:8px;min-width:36px;min-height:34px}
+.spi .ub.off{color:var(--mute);border-color:var(--line)}
+.spi button{border:0;background:transparent;color:var(--mute);font-size:20px;min-width:40px;min-height:40px}
 .ctag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:20px;margin-left:6px;vertical-align:2px;background:var(--bg);border:1px solid var(--line)}
 .ctag.vip{background:#f5a623;color:#111;border-color:#f5a623}.ctag.ab{color:#d9822b;border-color:#d9822b}.ctag.fr{background:#f6e3a1;color:#5b4300;border-color:#f6e3a1}.ctag.oc{color:#2a8a7a;border-color:#2a8a7a}.ctag.ns{color:#d93a2b;border-color:#d93a2b}.ctag.new{color:var(--mute)}
 .ctag.t-al{background:#b3122e;color:#fff;border-color:#b3122e}.ctag.t-es{background:#d7f7e6;color:#0b6a3a;border-color:#d7f7e6}.ctag.t-ra{background:#fbe1f0;color:#a0236b;border-color:#fbe1f0}.ctag.t-po{background:#e6e3f7;color:#3b2f87;border-color:#e6e3f7}.ctag.t-ot{background:var(--panel);color:var(--ink)}
@@ -239,7 +270,7 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
 <header class="top"><div class="wrap">
   <img src="logo.png" alt="Black-Out" class="logo"><p class="brand">Prenotazioni sala</p>
   <div class="sync" id="sync"><span class="dot"></span><span id="syncT">Connessione…</span></div>
-  <button class="ib" id="setBtn" aria-label="Impostazioni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="lb2">Impostazioni</span></button><button class="ib" id="outBtn" aria-label="Esci">Esci</button>
+  <button class="ib" id="setBtn" aria-label="Impostazioni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="lb2">Impostazioni</span></button><button class="ib" id="logBtn" aria-label="Registro attività" title="Registro attività"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h12l4 4v12H4z"/><path d="M8 11h8M8 15h8M8 7h5"/></svg></button><button class="ib" id="outBtn" aria-label="Esci"><span id="whoT"></span> Esci</button>
 </div></header>
 
 <section class="day"><div class="wrap">
@@ -268,7 +299,7 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
     <button class="btn" id="sumBtn" type="button" style="grid-column:1/-1;min-height:44px">Riepilogo del servizio ›</button>
   </section>
   <section class="svc" id="svc"></section>
-  <div class="tabs" role="tablist"><button data-tab="list" class="on">Prenotazioni</button><button data-tab="sala">Sala e tavoli</button><button data-tab="cli">Clienti</button></div>
+  <div class="tabs" role="tablist"><button data-tab="list" class="on">Prenotazioni</button><button data-tab="sala">Sala e tavoli</button><button data-tab="cli">Clienti</button><button data-tab="spesa">Spesa</button></div>
   <section class="req" id="req" hidden></section>
   <div class="quick" id="quick">
     <h2>Inserimento veloce</h2>
@@ -283,6 +314,29 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
   <input class="search" id="q" type="search" placeholder="Cerca per nome, telefono o nota…" autocomplete="off">
   <main id="list"></main>
   <section id="sala" hidden></section>
+  <section id="spesa" hidden>
+    <div class="qa">
+      <p class="qa-h">Aggiunta rapida</p>
+      <div class="qa-cats" id="qaCats"></div>
+      <div class="qa-items" id="qaItems"></div>
+    </div>
+    <details class="qa-man"><summary>Aggiungi a mano o modifica</summary>
+    <form class="qrow" id="spF" autocomplete="off" style="margin-top:12px">
+      <input type="text" id="spT" list="spList" placeholder="Cosa serve? es. mozzarella, limoni, tovaglioli" aria-label="Voce della spesa" style="flex:1 1 220px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font-size:16px">
+      <input type="text" id="spH" placeholder="Giacenza (ho)" aria-label="Giacenza" style="flex:1 1 120px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px">
+      <input type="text" id="spN" placeholder="Necessità (serve)" aria-label="Necessità" style="flex:1 1 120px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px">
+      <select id="spC" aria-label="Reparto" style="flex:0 1 140px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 10px;font-size:16px"></select>
+      <select id="spD" class="own" aria-label="Dove si compra" style="flex:0 1 120px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 10px;font-size:16px"><option value="">Dove…</option><option value="Metro">Metro</option><option value="Cash">Cash Capurso</option><option value="Altro">Altro</option></select>
+      <label class="spu"><input type="checkbox" id="spU">Urgente oggi</label>
+      <button class="btn pri" id="spGo" style="flex:none">Aggiungi</button><button class="btn" type="button" id="spCancel" hidden style="flex:none">Annulla</button>
+    </form>
+    <p class="hint" style="margin-top:6px">Scrivi giacenza e necessità con la stessa unità (es. 2 kg e 5 kg): il gestionale calcola quanto comprare. Tocca una voce per modificarla.</p>
+    </details>
+    <datalist id="spList"></datalist>
+    <div class="qrow" style="margin-top:10px"><a class="btn" id="spMe" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none;color:#fff;background:#1f9e57;border-color:#1f9e57">Manda a me su WhatsApp</a><a class="btn" id="spWa" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)">Invia a…</a><button class="btn" id="spClr" type="button">Togli i comprati</button><button class="btn" id="spImp" type="button">Incolla da WhatsApp</button></div>
+    <div class="spf own" id="spFil"></div>
+    <div id="spOut"></div>
+  </section>
   <section id="cli" hidden>
     <div class="qrow" style="margin-top:16px"><input type="text" id="cq" placeholder="Cerca cliente per nome o telefono…" aria-label="Cerca cliente" style="flex:1 1 220px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font-size:16px"><button class="btn" id="cExp" type="button" style="flex:none">Esporta CSV</button></div>
     <p class="lbl" id="cInfo" style="margin:8px 0 0"></p>
@@ -376,6 +430,39 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
     <div class="row"><button type="button" class="btn" data-close>Chiudi</button></div>
   </div>
 </div>
+<div class="sheet" id="qaSheet" role="dialog" aria-modal="true" aria-labelledby="qaT">
+  <div class="panel">
+    <h2 id="qaT"></h2><p class="meta" id="qaInfo"></p>
+    <label style="margin-top:12px">Quantità da comprare<input id="qaQ" autocomplete="off" placeholder="es. 2 balle, 3 kg, 1 cartone"></label>
+    <div class="qa-q" id="qaQs"></div>
+    <label style="margin-top:12px">Quanto ne hai ora (facoltativo)<input id="qaH" autocomplete="off" placeholder="es. mezzo frigo, 1 balla"></label>
+    <div class="own"><span class="lbl" style="display:block;margin-top:12px">Dove si compra</span>
+    <div class="seg" id="qaD"><button type="button" data-v="Metro">Metro</button><button type="button" data-v="Cash">Cash Capurso</button><button type="button" data-v="">Non so</button></div>
+    <p class="hint" id="qaDh" style="margin-top:4px"></p></div>
+    <label class="spu" style="margin-top:12px;display:inline-flex"><input type="checkbox" id="qaU">Urgente oggi</label>
+    <label class="chk own" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:500"><input type="checkbox" id="qaRem" style="width:20px;height:20px;min-height:0;margin:0;accent-color:var(--acc)">Ricorda questo negozio per questo prodotto</label>
+    <div class="row"><button type="button" class="btn pri" id="qaAdd">Aggiungi alla spesa</button><button type="button" class="btn" data-close>Annulla</button></div>
+  </div>
+</div>
+<div class="sheet" id="impSheet" role="dialog" aria-modal="true" aria-labelledby="impT">
+  <div class="panel">
+    <h2 id="impT">Incolla la lista da WhatsApp</h2>
+    <p class="hint" style="margin-top:0">Copia uno o più messaggi da WhatsApp (tieni premuto → Copia) e incollali qui. Riconosco «urgente», le quantità tra parentesi, «prendere 2», «finita», «rimasta», «per scorta», e le parole Metro e Cash.</p>
+    <textarea id="impTxt" style="min-height:160px;width:100%;margin-top:8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);padding:10px;font-size:16px"></textarea>
+    <div class="row"><button type="button" class="btn pri" id="impRead">Leggi la lista</button><button type="button" class="btn" data-close>Chiudi</button></div>
+    <div id="impOut"></div>
+  </div>
+</div>
+<div class="sheet" id="logSheet" role="dialog" aria-modal="true" aria-labelledby="logT">
+  <div class="panel">
+    <h2 id="logT">Registro attività</h2>
+    <p class="hint" style="margin-top:0">Chi ha creato, confermato, cancellato o cambiato prenotazioni, richieste e spesa.</p>
+    <div class="qrow" style="margin-top:8px"><select id="logU" aria-label="Utente" style="flex:1 1 140px;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 10px;font-size:16px"></select><select id="logK" aria-label="Tipo" style="flex:1 1 140px;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 10px;font-size:16px"><option value="">Tutto</option><option>Prenotazione</option><option>Richiesta</option><option>Spesa</option></select><button type="button" class="btn pri" id="logExp" style="flex:none">Esporta CSV</button></div>
+    <p class="lbl" id="logInfo" style="margin-top:8px"></p>
+    <ul class="hist" id="logList"></ul>
+    <div class="row"><button type="button" class="btn" data-close>Chiudi</button></div>
+  </div>
+</div>
 <div class="sheet" id="setSheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
   <form class="panel" id="setForm">
     <h2 id="sTitle">Impostazioni sala</h2>
@@ -437,6 +524,10 @@ const toMin=t=>{const[h,m]=String(t||'0:0').split(':').map(Number);let v=(h||0)*
 const hm=v=>{v=((v%1440)+1440)%1440;return pad(Math.floor(v/60))+':'+pad(v%60)};
 const durFor=d=>parse(d).getDay()===6?cfg.durSab:cfg.dur;
 const active=b=>b.status!=='cancellata'&&b.status!=='noshow';
+const who=()=>window.__who||'';const isOwner=()=>who()==='titolare';const nowIso=()=>new Date().toISOString();
+const sig=k=>({[k+'By']:who(),[k+'At']:nowIso()});
+const withLog=(cur,a,d,by)=>({...d,log:[...(((cur||{}).log)||[]).slice(-29),{a,by:by||who(),at:nowIso()}]});
+const fmtWhen=t=>{try{const d=new Date(t);return d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}catch(e){return''}};
 function files(){const fs=[];for(const t of cfg.tables){let f=fs.find(x=>x.n===t.fila);if(!f)fs.push(f={n:t.fila,l:[]});f.l.push(t)}return fs}
 function segs(){const out=[];for(const f of files()){const L=f.l;for(let i=0;i<L.length;i++)for(let j=i;j<L.length&&j<i+8;j++){const s=L.slice(i,j+1);if(s.length>1&&s.some(t=>!t.join))break;out.push({ids:s.map(t=>t.id),n:s.length,cap:s.reduce((a,t)=>a+(+t.solo||0),0),j:s.every(t=>t.join)})}}return out}
 function manualIds(b){const ids=new Set(cfg.tables.map(t=>t.id));const a=Array.isArray(b.tables)?b.tables:(b.table?String(b.table).split(/[+,\s]+/):[]);return a.map(String).filter(x=>ids.has(x))}
@@ -498,7 +589,7 @@ function card(b,showDate,P){
   <div class="pp"><b>${esc(b.people)}</b><small>pers.</small></div>
   <div class="info"><h3>${esc(b.name)}${ctags(cIndex().get(ckey(b)),true)}${b.sconto?`<span class="tag sc">${esc(b.sconto)}</span>`:''}${ST[st]?`<span class="tag" style="box-shadow:inset 3px 0 0 ${STC[st]}">${ST[st]}</span>`:''}${b.occasione?`<span class="tag">${esc(b.occasione)}</span>`:''}</h3>
   <p class="meta">${showDate?esc(fmtShort(b.date)+' · '+b.time)+' · ':''}${tl?'Tavolo '+tl+' · ':''}${esc(b.source==='TheFork'?'TF':b.source||'')}</p>
-  ${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}
+  ${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}${(b.log||[]).length?`<p class="meta" style="font-size:12px">${esc(b.log[b.log.length-1].a)} · ${esc(b.log[b.log.length-1].by||'')} ${esc(fmtWhen(b.log[b.log.length-1].at).split(' ')[1]||'')}</p>`:''}
   ${b.phone?`<p class="ph"><a href="tel:${esc(String(b.phone).replace(/[^\d+]/g,''))}">${esc(b.phone)}</a> · <a href="${esc(waLink(b))}" target="_blank" rel="noopener">WhatsApp</a></p>`:''}</div>
   <div class="acts"><button data-act="arr" class="${st==='arrivata'?'on':''}">Arrivato</button><button data-act="ns" class="${st==='noshow'?'on':''}">No-show</button><button data-act="edit">Scheda</button></div>
   </article>`;
@@ -519,7 +610,7 @@ function render(){
   $('#sA').textContent=list.filter(b=>VISIT.has(b.status)).reduce((s,b)=>s+(+b.people||0),0);
   $('#sF').textContent=Math.max(0,cfg.capacity-cv);
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
-  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#req').hidden=tab!=='list'||!reqs.length;$('#sala').hidden=tab!=='sala';$('#cli').hidden=tab!=='cli';if(tab==='cli')renderCli();
+  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#req').hidden=tab!=='list'||!reqs.length;$('#sala').hidden=tab!=='sala';$('#cli').hidden=tab!=='cli';if(tab==='cli')renderCli();$('#spesa').hidden=tab!=='spesa';if(tab==='spesa')renderSpesa();const off=tab==='spesa'||tab==='cli';document.querySelector('.sum').hidden=off;$('#svc').hidden=off;$('#banner').hidden=off;$('#addBtn').hidden=tab==='spesa';
   const L=$('#list');
   if(!ready){L.innerHTML='<p class="empty">Caricamento prenotazioni…</p>';return}
   if(q){
@@ -554,7 +645,7 @@ function renderSvc(){
   S.innerHTML=`<div class="hd"><span class="st op">Aperto · online ${st.offline?'spento':'attivo'}</span><button data-sv="online">${st.offline?'Attiva online':'Disattiva online'}</button><button class="dang" data-sv="close">Chiudi servizio</button></div>`+
    (st.offline?'<small>I clienti non possono prenotare online per questo giorno.</small>':`<div class="hd" style="margin-top:10px"><span style="margin-right:auto;font-size:14px">${st.solo?'<b>Solo richieste</b>: confermi tu ogni prenotazione':`<b>Conferma automatica</b> fino a ${cal.autoMax} persone, oltre su richiesta`}</span><button data-sv="solo">${st.solo?'Conferma automatica':'Solo richieste'}</button></div><div class="sl">${cal.orari.map(t=>`<button data-slot="${esc(t)}" class="${st.slotOff.includes(t)?'off':''}" aria-pressed="${!st.slotOff.includes(t)}">${esc(t)}</button>`).join('')}</div><small>Orari prenotabili online: tocca un orario per spegnerlo o riaccenderlo.</small>`);
 }
-$('#svc').addEventListener('click',e=>{
+$('#svc').addEventListener('click',e=>{if(!isOwner())return;
   const b=e.target.closest('button');if(!b)return;const st=dayState(sel);
   if(b.dataset.sv==='open')setDay(sel,{chiuso:st.weekly?false:null});
   else if(b.dataset.sv==='solo')setDay(sel,{solo:st.solo?(st.soloW?false:null):(st.soloW?null:true)});
@@ -649,14 +740,14 @@ $('#form').addEventListener('submit',async e=>{
   const data={name,phone:$('#fPhone').value.trim(),people:Math.max(1,+$('#fPeople').value||1),date,time,tables:[...fSel],source:$('#fSource').value,status:$('#fStatus').value,notes:$('#fNotes').value.trim(),sconto:(v=>v?'-'+v+'%':'')($('#fSconto').value.replace(/[^\d]/g,'')),updatedAt:now};
   const btn=$('#fSave');btn.disabled=true;
   try{
-    if(editing){data.createdAt=getB(editing)?.createdAt||now;await db.doc('bookings/'+editing).set(data)}
-    else{data.createdAt=now;await db.collection('bookings').add(data)}
+    if(editing){const cur=getB(editing);data.createdAt=cur?.createdAt||now;if(cur?.createdBy)data.createdBy=cur.createdBy;if(cur?.online)data.online=true;if(cur?.occasione)data.occasione=cur.occasione;await db.doc('bookings/'+editing).set(withLog(cur,'Modificata',data))}
+    else{data.createdAt=now;data.createdBy=who();await db.collection('bookings').add(withLog(null,rEdit?'Confermata (richiesta online)':'Creata',data))}
     if(!editing&&qEdit){pending=pending.filter(x=>x!==qEdit);qEdit=null;renderQ()}
-    if(!editing&&rEdit){try{await db.doc('richieste/'+rEdit.id).update({stato:'confermata'})}catch(e){}rEdit=null}
+    if(!editing&&rEdit){try{await db.doc('richieste/'+rEdit.id).update({stato:'confermata',...sig('ges')})}catch(e){}rEdit=null}
     closeAll();toast('Prenotazione salvata');go(date);if(date<winStart)loadOld(date);
   }catch(err){toast(errMsg(err))}finally{btn.disabled=false}
 });
-$('#fDel').addEventListener('click',async()=>{
+$('#fDel').addEventListener('click',async()=>{if(!isOwner())return toast('Solo il titolare può eliminare: usa «Cancella prenotazione»');
   if(!delArmed){delArmed=true;$('#fDel').textContent='Conferma eliminazione';return}
   const id=editing,copy={...getB(id)};
   try{await db.doc('bookings/'+id).delete();old.delete(id);closeAll();render();
@@ -674,7 +765,7 @@ $('#list').addEventListener('click',async e=>{
   const target=b.dataset.act==='arr'?'arrivata':'noshow';
   const status=cur.status===target?'confermata':target;
   b.disabled=true;
-  const upd={status,updatedAt:new Date().toISOString()};
+  const upd=withLog(cur,STL[status]||status,{status,updatedAt:new Date().toISOString(),...sig('stato')});
   if(status==='arrivata'&&!manualIds(cur).length){const a=plan(cur.date).as.get(id);if(a)upd.tables=a.ids}
   try{await db.doc('bookings/'+id).update(upd);if(cur.date<winStart)loadOld(cur.date)}catch(err){toast(errMsg(err))}finally{b.disabled=false}
 });
@@ -698,7 +789,7 @@ $('#sTables').addEventListener('click',e=>{const r=e.target.closest('[data-i]');
   if(e.target.closest('[data-rm]')){draft.splice(i,1);ted()}
   const m=e.target.closest('[data-mv]');if(m){const j=i+ +m.dataset.mv;if(j>=0&&j<draft.length){[draft[i],draft[j]]=[draft[j],draft[i]];ted()}}});
 $('#sAdd').addEventListener('click',()=>{const l=draft[draft.length-1];draft.push({id:'T'+(draft.length+1),fila:l?l.fila:'Sala',solo:2,join:true});ted()});
-$('#setBtn').addEventListener('click',()=>{$('#sCap').value=cfg.capacity;$('#sTurni').value=cfg.turni.join(', ');$('#sDur').value=cfg.dur;$('#sDurSab').value=cfg.durSab;$('#sBuf').value=cfg.buffer;$('#sHeads').value=cfg.heads;draft=cfg.tables.map(t=>({...t}));ted();$('#sWdays').innerHTML=[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" value="${i}" ${cal.chiusoSett.includes(i)?'checked':''}>${GG[i].slice(0,3)}</label>`).join('');$('#sOrari').value=cal.orari.join(', ');$('#sAuto').value=cal.autoMax;$('#sRich').innerHTML=[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" value="${i}" ${cal.soloRichSett.includes(i)?'checked':''}>${GG[i].slice(0,3)}</label>`).join('');$('#setSheet').classList.add('open')});
+$('#setBtn').addEventListener('click',()=>{if(!isOwner())return toast('Solo il titolare può cambiare le impostazioni');$('#sCap').value=cfg.capacity;$('#sTurni').value=cfg.turni.join(', ');$('#sDur').value=cfg.dur;$('#sDurSab').value=cfg.durSab;$('#sBuf').value=cfg.buffer;$('#sHeads').value=cfg.heads;draft=cfg.tables.map(t=>({...t}));ted();$('#sWdays').innerHTML=[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" value="${i}" ${cal.chiusoSett.includes(i)?'checked':''}>${GG[i].slice(0,3)}</label>`).join('');$('#sOrari').value=cal.orari.join(', ');$('#sAuto').value=cal.autoMax;$('#sRich').innerHTML=[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" value="${i}" ${cal.soloRichSett.includes(i)?'checked':''}>${GG[i].slice(0,3)}</label>`).join('');$('#setSheet').classList.add('open')});
 $('#setForm').addEventListener('submit',async e=>{
   e.preventDefault();if(!db)return toast('Sincronizzazione non disponibile');
   const capacity=Math.max(1,+$('#sCap').value||72);
@@ -817,7 +908,9 @@ function renderBk(){
     <label style="margin-top:12px">Occasione speciale<select id="bOcc">${OCC.map(o=>`<option value="${esc(o)}" ${o===(b.occasione||'')?'selected':''}>${o||'Non specificato'}</option>`).join('')}</select></label>
     <label style="margin-top:12px">Note del ristorante (solo uso interno)<textarea id="bNote">${esc(b.notes||'')}</textarea></label>
     <div class="drow"><span>Provenienza</span><b>${esc(b.source==='TheFork'?'TheFork':b.source||'—')}${b.online?' · confermata online':''}</b></div>
-    <div class="drow"><span>Creata il</span><b>${b.createdAt?esc(new Date(b.createdAt).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})):'—'}</b></div>`;
+    <div class="drow"><span>Creata il</span><b>${b.createdAt?esc(new Date(b.createdAt).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})):'—'}${b.createdBy?' da '+esc(b.createdBy):''}</b></div>
+    <h2 class="sec" style="font-size:18px">Chi ha fatto cosa</h2>
+    <ul class="hist">${(b.log||[]).slice().reverse().map(l=>`<li><span>${esc(l.a)}</span><span>${esc(l.by||'—')} · ${esc(fmtWhen(l.at))}</span></li>`).join('')||'<li><span>Nessuna modifica registrata</span><span></span></li>'}</ul>`;
   }
   const m=(c&&c.meta)||{};
   $('#bC').innerHTML=c?`<div class="tiles"><div><b>${c.list.length}</b><span>prenotazioni</span></div><div><b>${c.cancel}</b><span>cancellazioni</span></div><div><b style="color:${c.noshow?'#d93a2b':'inherit'}">${c.noshow}</b><span>no-show</span></div></div>
@@ -828,15 +921,15 @@ function renderBk(){
     <button type="button" class="btn" id="bOpenCli" style="margin-top:14px;width:100%">Apri scheda cliente</button>`:'<p class="meta">Nessun dato cliente.</p>';
   $('#bCancel').textContent=st==='cancellata'?'Ripristina prenotazione':'Cancella prenotazione';
 }
-async function updBk(d){if(!db||!bkId)return;const cur=getB(bkId);try{await db.doc('bookings/'+bkId).update({...d,updatedAt:new Date().toISOString()});if(cur&&cur.date<winStart)loadOld(cur.date)}catch(e){toast(errMsg(e))}}
+async function updBk(d,a){if(!db||!bkId)return;const cur=getB(bkId);const x={...d,updatedAt:new Date().toISOString()};if(d.status)Object.assign(x,sig('stato'));try{await db.doc('bookings/'+bkId).update(a?withLog(cur,a,x):x);if(cur&&cur.date<winStart)loadOld(cur.date)}catch(e){toast(errMsg(e))}}
 $('#bSt').addEventListener('click',e=>{const x=e.target.closest('[data-st]');if(!x)return;const cur=getB(bkId),d={status:x.dataset.st};
-  if(VISIT.has(d.status)&&cur&&!manualIds(cur).length){const a=plan(cur.date).as.get(bkId);if(a)d.tables=a.ids}updBk(d)});
+  if(VISIT.has(d.status)&&cur&&!manualIds(cur).length){const a=plan(cur.date).as.get(bkId);if(a)d.tables=a.ids}updBk(d,STL[d.status])});
 document.querySelectorAll('[data-bt]').forEach(x=>x.addEventListener('click',()=>{bTab=x.dataset.bt;renderBk()}));
-$('#bkSheet').addEventListener('change',e=>{if(e.target.id==='bOcc')updBk({occasione:e.target.value});if(e.target.id==='bNote')updBk({notes:e.target.value.trim()})});
+$('#bkSheet').addEventListener('change',e=>{if(e.target.id==='bOcc')updBk({occasione:e.target.value},'Occasione: '+(e.target.value||'nessuna'));if(e.target.id==='bNote')updBk({notes:e.target.value.trim()},'Note modificate')});
 $('#bkSheet').addEventListener('click',e=>{if(e.target.id==='bOpenCli'){const b=getB(bkId);if(b){closeAll();openCli(ckey(b))}}});
-$('#bLock').addEventListener('click',()=>{const cur=getB(bkId);if(!cur)return;if(manualIds(cur).length)updBk({tables:[]});else{const a=plan(cur.date).as.get(bkId);if(a)updBk({tables:a.ids})}});
+$('#bLock').addEventListener('click',()=>{const cur=getB(bkId);if(!cur)return;if(manualIds(cur).length)updBk({tables:[]},'Tavolo sbloccato');else{const a=plan(cur.date).as.get(bkId);if(a)updBk({tables:a.ids},'Tavolo bloccato: '+a.ids.join('+'))}});
 $('#bEdit').addEventListener('click',()=>{const id=bkId;closeAll();openForm(id)});
-$('#bCancel').addEventListener('click',()=>{const cur=getB(bkId);if(cur)updBk({status:cur.status==='cancellata'?'confermata':'cancellata'})});
+$('#bCancel').addEventListener('click',()=>{const cur=getB(bkId);if(cur)updBk({status:cur.status==='cancellata'?'confermata':'cancellata'},cur.status==='cancellata'?'Ripristinata':'Cancellata')});
 
 /* ---- calendario mensile ---- */
 let calM=null;
@@ -873,13 +966,174 @@ function renderSum(){
 $('#sumBtn').addEventListener('click',()=>{renderSum();$('#sumSheet').classList.add('open')});
 $('#sumMode').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b){sumMode=b.dataset.m;renderSum()}});
 
+/* ---- lista spesa ---- */
+const SPC=['Cucina','Bar','Bevande','Sala e asporto','Pulizie','Altro'],SPD=['Metro','Cash','Altro'];let spesa=[],spEdit=null,spFil='';
+const SPK={Bar:['fusto','birra','grimbergen','peroni','punk','blanche','corona','kwak','forst','franziskaner','hobgoblin','horses','unicum','prosecco','aperol','batida','monkey','assenzio','passoa','chivas','limoncello','tequila','campari','curaçao','curacao','bitter','maraschino','ciliegie','cirliegie','arachidi','zenzer','lime','gin','rum','vodka','whisky','amaro','jager','sambuca','vino','spritz'],
+ Bevande:['coca','fanta','sprite','schweppes','ginger','acqua','tonica','succo','redbull','red bull','chinotto'],
+ 'Sala e asporto':['asporto','box','stecchin','bicchier','cannucc','tovagli','comande','scontrino','mono','piattini','posate'],
+ Pulizie:['immondizia','scottex','pellicola','smac','candeggina','sgrassatore','igienica','detersivo','spugn','guanti','disinfettante','brillantante','sapone','alluminio','carta forno'],
+ Cucina:['carne','patat','purè','pure','smoked','bbq','algerina','barbabietol','stracciatella','pollo','sugo','pangrattato','pan grattato','lenticchie','ceci','insalata','nutella','bacon','cheddar','maionese','tuorlo','panini','paprika','oreo','cioccolato','guanciale','cipoll','olio','zampina','cavolo','polpette','mortadella','uova','burro','melanzan','happy ippo','kinder','latte','sale','friarielli','pecorino','mix','corn','panna','norcia','scamorza','glutammato','farina','mozzarella','pomodor','salsa','formaggio','prosciutto','salame','wurstel','hamburger','pane']};
+const DL={Metro:'Metro',Cash:'Cash Capurso',Altro:'Altro'};const dl=d=>DL[d]||d;
+const M='Metro',C='Cash',B=['Metro','Cash'];
+const CAT0=[
+ ['Cucina',[['Carne',C],['Carne suino',C],['Pollo',C],['Bacon',C],['Bacon gluten free',C],['Guanciale',C],['Mortadella',C],['Norcia',''],['Zampina',M],['Polpette di soia',M],['Uova',C],['Tuorlo',M],['Stracciatella',C],['Scamorza',''],['Scamorza gluten free',C],['Cheddar fette',M],['Pecorino',C],['Burro da cucina',C],['Burro bavarese',''],['Latte',''],['Panna spray',''],['Patate',C],['Patate dolci',''],['Patate rosse',M],['Purè',C],['Insalata',M],['Cipolle',M],['Cavolo rosso',M],['Cavolo bianco',M],['Melanzane',C],['Friarielli',''],['Barbabietole',''],['Lenticchie',''],['Ceci',''],['Panini',C],['Panini gluten free',M],['Pangrattato',C],['Farina 0',''],['Farina 00',''],['Corn flakes',''],['Maionese bidone',M],['Maionese gluten free',''],['BBQ',M],['Algerina',M],['SMOKED',M],['Sugo',''],['Mix',''],['Olio per friggere',C],['Olio piccante',''],['Sale',''],['Paprika',''],['Glutammato',''],['Nutella',''],['Oreo',''],['Cioccolato fondente 70%',''],['Happy Hippo',''],['Kinder Cereali',''],['Kinder Bueno','']]],
+ ['Bar',[['Fusto birra',M],['Grimbergen rossa',M],['Blanche de Namur',''],['Punk IPA',M],['Hobgoblin',''],['Kwak',''],['Corona',''],['Forst 0',''],['Franziskaner',C],['Peroni gluten free',''],['Horses Hill',''],['Prosecco',''],['Aperol',''],['Campari',''],['Tequila',''],['Limoncello',M],['Unicum',''],['Batida',''],['Monkey 47',''],['Assenzio',B],['Passoa',''],['Chivas',''],['Blue Curaçao',''],['Orange bitter',''],['Ciliegie maraschino',''],['Zenzero',''],['Lime',''],['Arachidi',M]]],
+ ['Bevande',[['Acqua naturale',B],['Acqua naturale piccola',''],['Acqua frizzante',B],['Coca Cola',B],['Coca Zero',B],['Fanta',''],['Schweppes lemon',''],['Ginger beer',''],['Acqua brillante',''],['Tonica',''],['Succo ananas',C],['Succo arancia','']]],
+ ['Sala e asporto',[['Tovaglie sala',C],['Tovaglioli sala',''],['Tovaglioli bar',''],['Bicchieri plastica drink',''],['Cannucce piccole',''],['Cannucce grandi',''],['Stecchini lunghi',''],['Box asporto grande',''],['Buste asporto',''],['Buste asporto nere',M],['Ketchup mono',''],['Mayo mono',''],['Blocchi comande',''],['Carta scontrino grande','']]],
+ ['Pulizie',[['Buste immondizia',''],['Carta igienica',''],['Scottex',M],['Pellicola',''],['Guanti',''],['Detersivo piatti',''],['Detersivo lavastoviglie',C],['Brillantante',''],['Candeggina',C],['Smac candeggina gel',''],['Sgrassatore',''],['Disinfettante spray',''],['Spugne',C]]]];
+let catalogo=CAT0.flatMap(([c,l])=>l.map(([n,d])=>({n,c,d:Array.isArray(d)?d:d?[d]:[]})));
+const catFind=t=>catalogo.find(x=>norm(x.n)===norm(t));
+function spCat(name){const f=catFind(name);if(f)return f.c;const n=' '+norm(name)+' ';let best=null,bl=0;for(const[c,ks]of Object.entries(SPK))for(const k of ks)if(n.includes(norm(k))&&k.length>bl){best=c;bl=k.length}return best}
+const capF=t=>t.charAt(0).toUpperCase()+t.slice(1);
+function spParse(txt){
+  const out=[];let dove='',cat='',hdrCat='';
+  const HDR={birra:'Bar',birre:'Bar',alcolici:'Bar',analcolici:'Bevande',bibite:'Bevande',varie:'Sala e asporto',cucina:'Cucina',pulizie:'Pulizie'};
+  for(let raw of String(txt).split(/\r?\n/)){
+    let l=raw.trim();if(!l)continue;
+    const ts=l.match(/^\[\d{1,2}\/\d{1,2}(?:\/\d{2,4})?,?\s*\d{1,2}[:.]\d{2}(?::\d{2})?\]\s*[^:]{1,60}:\s*(.*)$/);
+    if(ts){dove='';cat='';hdrCat='';l=ts[1].trim();if(!l)continue}
+    const ln=norm(l).replace(/[^a-z0-9 ]/g,'').trim();
+    if(/^(lista\s*)?metro$/.test(ln)){dove='Metro';continue}
+    if(/^(lista\s*)?cash$/.test(ln)){dove='Cash';continue}
+    if(ln==='lista'||ln==='lista spesa')continue;
+    if(HDR[ln]){hdrCat=HDR[ln];continue}
+    if(/^promemoria/.test(ln))continue;
+    const it={text:'',cat:'',dove,urgente:false,giac:'',nec:'',nota:''};let m;
+    if(/\burgent[ei]\b/i.test(l)){it.urgente=true;l=l.replace(/\s*\burgent[ei]\b/ig,'')}
+    if(/\b(per\s+)?(scorta|sicurezza)\b/i.test(l)&&!/rimast|finit/i.test(l)){it.nota='scorta';l=l.replace(/\s*\b(per\s+)?(scorta|sicurezza)\b/ig,'')}
+    const par=l.match(/\(([^)]*)\)/);if(par){const v=par[1].trim();if(/^[\d.,/\s]+(kg|g|l|pz|cartoni?|casse?|balle?)?$/i.test(v))it.nec=v;else if(v&&v!=='?')it.nota=(it.nota?it.nota+' · ':'')+v;l=l.replace(par[0],' ').trim()}
+    if((m=l.match(/\bprendere\s+(\d+[\d.,]*)/i))){it.nec=m[1];l=l.replace(m[0],'').trim()}
+    if((m=l.match(/^fusto\s+birra\b(.*)$/i))||(m=l.match(/^(\d+\s+fust[oi]\b.*)$/i))){it.text='Fusto birra';it.nota=(m[1]||'').trim()}
+    else if((m=l.match(/^(carne(?:\s+suino)?)\s+(\d+[\d.,]*)\s*(kg)?\s*$/i))){it.text=capF(m[1]);it.giac=m[2]+' kg'}
+    else if(/^carne\s+finit/i.test(l)){it.text='Carne';it.giac='0'}
+    else if((m=l.match(/^(.*?)\s+(mezzo\s+frigo(?:\s+pieno)?|frigo\s+pieno|sta\s+per\s+finire)\b(.*)$/i))&&m[1]){it.text=capF(m[1].trim());it.giac=m[2];const r=m[3].replace(/^\s*e\s+/i,'').trim();if(r)it.nota=(it.nota?it.nota+' · ':'')+r}
+    else if(/\bfinit[oaie]\b/i.test(l)){it.giac='0';l=l.replace(/\s*\bfinit[oaie]\b/ig,'').replace(/\bscorta\b/ig,'').trim()}
+    else if((m=l.match(/^(.*?)\s+((?:\d+[\d.,]*|mezz[oa]|una?)(?:\s+e\s+mezz[oa])?(?:\s+[a-zà-ù]+){0,3}?)\s+(rimast[aeio]|pien[oa])\b(.*)$/i))&&m[1]){it.text=capF(m[1].trim());it.giac=(m[2]+(/pien/i.test(m[3])?' '+m[3]:'')).trim();const r=m[4].replace(/\b(rimast[aeio]|scorta|e)\b/ig,'').replace(/\s+/g,' ').trim();if(r)it.nota=(it.nota?it.nota+' · ':'')+r}
+    if(!it.text)it.text=capF(l.replace(/\s+/g,' ').replace(/[,;.]+$/,'').trim());
+    if(!it.text)continue;
+    it.cat=spCat(it.text)||hdrCat||cat||'Altro';cat=it.cat;
+    if(!it.dove){const f=catFind(it.text);if(f&&f.d.length===1)it.dove=f.d[0]}
+    out.push(it);
+  }
+  const map=new Map();for(const x of out){const k=norm(x.text);const o=map.get(k);map.set(k,o?{...o,...Object.fromEntries(Object.entries(x).filter(([,v])=>v!==''&&v!==false)),urgente:o.urgente||x.urgente}:x)}
+  return [...map.values()];
+}
+const numU=v=>{const m=String(v||'').replace(',','.').match(/(-?\d+(?:\.\d+)?)\s*(.*)/);return m?{n:+m[1],u:m[2].trim()}:null};
+function toBuy(x){const h=numU(x.giac),n=numU(x.nec||x.qty);if(!n)return'';if(!h)return x.nec||x.qty||'';if(h.u&&n.u&&h.u.toLowerCase()!==n.u.toLowerCase())return x.nec||'';const d=Math.round((n.n-h.n)*100)/100;return d>0?(d+(n.u?' '+n.u:'')):'0'}
+const isUrg=x=>!x.done&&x.urgente;
+$('#spC').innerHTML=SPC.map(c=>`<option>${c}</option>`).join('');
+function renderSpesa(){
+  const F=spFil?spesa.filter(x=>spFil==='—'?!x.dove:x.dove===spFil):spesa;
+  $('#spFil').innerHTML=['','Metro','Cash','—'].map(d=>`<button type="button" data-fil="${d}" class="${d===spFil?'on':''}">${d===''?'Tutto':d==='—'?'Senza negozio':dl(d)} (${(d?spesa.filter(x=>!x.done&&(d==='—'?!x.dove:x.dove===d)):spesa.filter(x=>!x.done)).length})</button>`).join('');
+  const L=[...F].sort((a,b)=>(+!!a.done)-(+!!b.done)||(+isUrg(b))-(+isUrg(a))||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+  const todo=L.filter(x=>!x.done).length,urg=L.filter(isUrg);
+  const row=x=>{const tb=toBuy(x);return `<label class="spi${x.done?' done':''}${isUrg(x)?' urg':''}" data-sp="${esc(x.id)}"><input type="checkbox" ${x.done?'checked':''}><span data-ed>${esc(x.text)}${isUrg(x)?`<em class="u">${x.urgDate===today?'URGENTE OGGI':'URGENTE'}</em>`:''}${x.dove?`<em class="dv${x.dove==='Cash'?' cash':''}">${esc(dl(x.dove))}</em>`:''}${x.nota?`<em class="nt">${esc(x.nota)}</em>`:''}<small class="buy">${x.giac?'Ho '+esc(x.giac)+' · ':''}${x.nec||x.qty?'Serve '+esc(x.nec||x.qty):''}${tb&&tb!=='0'?' → <b>compra '+esc(tb)+'</b>':tb==='0'?' → <b>basta così</b>':''}</small><small class="by">${[x.addBy?'aggiunto da '+esc(x.addBy)+' '+esc(fmtWhen(x.addAt)):'',x.modBy?'modificato da '+esc(x.modBy):'',x.urgente&&x.urgBy?'urgente per '+esc(x.urgBy):'',x.done&&x.doneBy?'<b>comprato da '+esc(x.doneBy)+' '+esc(fmtWhen(x.doneAt))+'</b>':''].filter(Boolean).join(' · ')}</small></span><button type="button" class="ub${x.urgente?'':' off'}" data-urg aria-label="Urgente">!</button><button type="button" data-del aria-label="Elimina">×</button></label>`};
+  $('#spOut').innerHTML=L.length?`<p class="lbl" style="margin-top:12px">${todo} da comprare${urg.length?` · <b style="color:#d93a2b">${urg.length} urgenti</b>`:''}${L.length-todo?` · ${L.length-todo} comprati`:''}</p>`+
+    (urg.length?`<div class="spc"><h3 style="color:#d93a2b">Urgente per oggi</h3>${urg.map(row).join('')}</div>`:'')+
+    SPC.filter(c=>L.some(x=>!isUrg(x)&&(x.cat||'Altro')===c)).map(c=>`<div class="spc"><h3>${c}</h3>${L.filter(x=>!isUrg(x)&&(x.cat||'Altro')===c).map(row).join('')}</div>`).join(''):'<p class="empty">La lista è vuota. Aggiungi quello che serve.</p>';
+  const li=x=>{const tb=toBuy(x);return `- ${x.text}${tb&&tb!=='0'?' ('+tb+')':''}`};
+  const parts=[],li2=x=>li(x)+(x.nota==='scorta'?' (scorta)':x.nota?' – '+x.nota:'');
+  const todoL=L.filter(x=>!x.done&&toBuy(x)!=='0');
+  for(const d of [...SPD,'']){const ofD=todoL.filter(x=>(x.dove||'')===d);if(!ofD.length)continue;const sec=[];
+    const u=ofD.filter(isUrg);if(u.length)sec.push('URGENTE:\n'+u.map(li2).join('\n'));
+    for(const c of SPC){const it=ofD.filter(x=>!isUrg(x)&&(x.cat||'Altro')===c);if(it.length)sec.push(c+':\n'+it.map(li2).join('\n'))}
+    parts.push((d?`*${dl(d).toUpperCase()}*\n`:todoL.some(x=>x.dove)?'*NEGOZIO DA SCEGLIERE*\n':'')+sec.join('\n\n'))}
+  renderQA();
+  $('#spMe').textContent=isOwner()?'Manda a me su WhatsApp':'Manda al titolare su WhatsApp';
+  $('#spMe').href='https://wa.me/'+(typeof WA_ME!=='undefined'?WA_ME:'393275406999')+'?text='+encodeURIComponent('Lista spesa Black-Out\n\n'+(parts.join('\n\n')||'(niente da comprare)'));
+  $('#spWa').href='https://wa.me/?text='+encodeURIComponent('Lista spesa Black-Out\n\n'+(parts.join('\n\n')||'(niente da comprare)'));
+  const names=[...new Set(spesa.map(x=>x.text))].slice(0,200);$('#spList').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
+}
+function spReset(){spEdit=null;$('#spD').value='';$('#spT').value='';$('#spH').value='';$('#spN').value='';$('#spU').checked=false;$('#spGo').textContent='Aggiungi';$('#spCancel').hidden=true}
+$('#spCancel').addEventListener('click',spReset);
+$('#spF').addEventListener('submit',async e=>{e.preventDefault();const text=$('#spT').value.trim();if(!text||!db)return;
+  const urg=$('#spU').checked,d={text,giac:$('#spH').value.trim(),nec:$('#spN').value.trim(),cat:$('#spC').value,dove:isOwner()?$('#spD').value:((spEdit&&(spesa.find(x=>x.id===spEdit)||{}).dove)||((catFind(text)||{d:[]}).d.length===1?catFind(text).d[0]:'')),urgente:urg,urgDate:urg?today:''};
+  const old=spEdit?spesa.find(x=>x.id===spEdit):spesa.find(x=>norm(x.text)===norm(text));
+  try{if(old)await db.doc('spesa/'+old.id).update({...d,done:false,...sig('mod')});
+    else await db.collection('spesa').add({...d,done:false,createdAt:new Date().toISOString(),...sig('add')});
+    spReset();$('#spT').focus()}catch(err){toast(errMsg(err))}});
+$('#spT').addEventListener('change',()=>{if(spEdit)return;const v=$('#spT').value.trim(),o=spesa.find(x=>norm(x.text)===norm(v));if(!o){const c=spCat(v);if(c)$('#spC').value=c}if(o){$('#spC').value=o.cat||'Altro';$('#spD').value=o.dove||'';if(!$('#spN').value)$('#spN').value=o.nec||o.qty||''}});
+$('#spOut').addEventListener('click',async e=>{const row=e.target.closest('[data-sp]');if(!row||!db)return;const id=row.dataset.sp;
+  if(e.target.closest('[data-del]')){e.preventDefault();try{await db.doc('spesa/'+id).delete()}catch(err){toast(errMsg(err))}return}
+  if(e.target.closest('[data-urg]')){e.preventDefault();const x=spesa.find(y=>y.id===id);if(x)try{await db.doc('spesa/'+id).update({urgente:!x.urgente,urgDate:!x.urgente?today:'',...sig('urg')})}catch(err){toast(errMsg(err))}return}
+  if(e.target.closest('[data-ed]')){e.preventDefault();const x=spesa.find(y=>y.id===id);if(!x)return;spEdit=id;$('#spT').value=x.text;$('#spH').value=x.giac||'';$('#spN').value=x.nec||x.qty||'';$('#spC').value=x.cat||'Altro';$('#spD').value=x.dove||'';$('#spU').checked=!!x.urgente;$('#spGo').textContent='Salva';$('#spCancel').hidden=false;$('#spT').scrollIntoView({block:'center'});$('#spT').focus();return}
+  if(e.target.tagName==='INPUT'){try{await db.doc('spesa/'+id).update(e.target.checked?{done:true,...sig('done')}:{done:false,doneBy:'',doneAt:''})}catch(err){toast(errMsg(err))}}});
+/* aggiunta rapida */
+let qaCat='Cucina',qaItem=null,qaDove='';
+function renderQA(){
+  $('#qaCats').innerHTML=SPC.filter(c=>c!=='Altro').map(c=>`<button type="button" data-qc="${c}" class="${c===qaCat?'on':''}">${c}</button>`).join('');
+  $('#qaItems').innerHTML=catalogo.filter(x=>x.c===qaCat).map(x=>{const inL=spesa.find(y=>!y.done&&norm(y.text)===norm(x.n));return `<button type="button" data-qi="${esc(x.n)}" class="${inL?'in':''}${inL&&isUrg(inL)?' urg':''}">${esc(x.n)}<small>${x.d.length===2?'Metro o Cash':x.d.length?esc(dl(x.d[0])):'&nbsp;'}</small></button>`}).join('')+'<button type="button" class="new" data-qn="1">+ Nuovo prodotto</button>';
+}
+$('#qaCats').addEventListener('click',e=>{const b=e.target.closest('[data-qc]');if(b){qaCat=b.dataset.qc;renderQA()}});
+function setQaD(v){qaDove=v;document.querySelectorAll('#qaD button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+function openQA(name,isNew){
+  const f=catFind(name)||{n:name,c:qaCat,d:[]};qaItem={...f,isNew};const ex=spesa.find(y=>!y.done&&norm(y.text)===norm(f.n));
+  $('#qaT').innerHTML=isNew?`<input id="qaN" placeholder="Nome prodotto" style="font-size:20px;font-weight:800;width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--panel);padding:0 12px">`:esc(f.n);
+  $('#qaInfo').textContent=f.c+(ex?' · già in lista: la aggiorno':'');
+  $('#qaQ').value=ex?(ex.nec||''):'';$('#qaH').value=ex?(ex.giac||''):'';$('#qaU').checked=ex?!!ex.urgente:false;
+  setQaD(ex&&ex.dove?ex.dove:f.d.length===1?f.d[0]:'');
+  $('#qaDh').textContent=f.d.length===2?'Lo compri sia al Metro che al Cash Capurso: scegli dove questa volta.':f.d.length===1?'Di solito da '+dl(f.d[0])+'.':'Negozio non ancora impostato.';
+  $('#qaRem').checked=false;
+  const units=/acqua|coca|fanta|tonica|ginger|succo|schweppes/i.test(f.n)?['1 balla','2 balle','3 balle','1 cassa']:/fusto/i.test(f.n)?['1','2']:/carne|patat|pollo|bacon|guanciale|pecorino|farina/i.test(f.n)?['1 kg','2 kg','3 kg','5 kg','10 kg']:['1','2','3','5','10'];
+  $('#qaQs').innerHTML=units.map(u=>`<button type="button" data-qq="${u}">${u}</button>`).join('');
+  $('#qaSheet').classList.add('open');setTimeout(()=>(isNew?$('#qaN'):$('#qaQ')).focus(),60);
+}
+$('#qaItems').addEventListener('click',e=>{const b=e.target.closest('[data-qi]');if(b)return openQA(b.dataset.qi,false);if(e.target.closest('[data-qn]'))openQA('',true)});
+$('#qaQs').addEventListener('click',e=>{const b=e.target.closest('[data-qq]');if(b)$('#qaQ').value=b.dataset.qq});
+$('#qaD').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b)setQaD(b.dataset.v)});
+$('#qaAdd').addEventListener('click',async()=>{if(!qaItem||!db)return;
+  const name=qaItem.isNew?($('#qaN').value||'').trim():qaItem.n;if(!name){$('#qaN').focus();return}
+  const urg=$('#qaU').checked,ex=spesa.find(y=>norm(y.text)===norm(name));
+  const d={text:capF(name),cat:qaItem.c||spCat(name)||qaCat,dove:isOwner()?qaDove:(ex&&ex.dove)||(qaItem.d&&qaItem.d.length===1?qaItem.d[0]:''),nec:$('#qaQ').value.trim(),giac:$('#qaH').value.trim(),urgente:urg,urgDate:urg?today:'',done:false};
+  try{if(ex)await db.doc('spesa/'+ex.id).update({...d,...sig('mod')});else await db.collection('spesa').add({...d,createdAt:new Date().toISOString(),...sig('add')});
+    if((qaItem.isNew&&isOwner())||(isOwner()&&$('#qaRem').checked)||(qaItem.isNew&&!isOwner())){const list=catalogo.filter(x=>norm(x.n)!==norm(name));list.push({n:capF(name),c:d.cat,d:qaDove?[qaDove]:(qaItem.d||[])});await db.doc('config/catalogo').set({items:list})}
+    closeAll();toast(capF(name)+' aggiunto'+(urg?' · urgente':''))}catch(err){toast(errMsg(err))}});
+
+$('#spFil').addEventListener('click',e=>{const b=e.target.closest('[data-fil]');if(b){spFil=b.dataset.fil;renderSpesa()}});
+let impItems=[];
+$('#spImp').addEventListener('click',()=>{$('#impTxt').value='';$('#impOut').innerHTML='';$('#impSheet').classList.add('open');setTimeout(()=>$('#impTxt').focus(),50)});
+$('#impRead').addEventListener('click',()=>{impItems=spParse($('#impTxt').value);
+  $('#impOut').innerHTML=impItems.length?`<p class="lbl" style="margin-top:14px">${impItems.length} voci trovate: togli la spunta a quelle che non servono.</p><ul class="imp">${impItems.map((x,i)=>{const ex=spesa.find(y=>norm(y.text)===norm(x.text)&&!y.done);return `<li><input type="checkbox" checked data-ii="${i}"><span><b>${esc(x.text)}</b>${x.urgente?' <b style="color:#d93a2b">URGENTE</b>':''}<small>${esc(x.cat)}${x.dove?' · '+esc(dl(x.dove)):''}${x.giac?' · ho '+esc(x.giac):''}${x.nec?' · serve '+esc(x.nec):''}${x.nota?' · '+esc(x.nota):''}${ex?' · già in lista: la aggiorno':''}</small></span></li>`}).join('')}</ul><div class="row"><button type="button" class="btn pri" id="impAdd">Aggiungi alla spesa</button></div>`:'<p class="empty">Non ho trovato voci.</p>';});
+$('#impOut').addEventListener('click',async e=>{if(e.target.id!=='impAdd'||!db)return;e.target.disabled=true;
+  const sel=[...document.querySelectorAll('#impOut [data-ii]:checked')].map(x=>impItems[+x.dataset.ii]);let n=0;
+  for(const x of sel){const ex=spesa.find(y=>norm(y.text)===norm(x.text));const d={text:x.text,cat:x.cat,dove:x.dove||'',giac:x.giac||'',nec:x.nec||'',nota:x.nota||'',urgente:!!x.urgente,urgDate:x.urgente?today:'',done:false};
+    try{if(ex)await db.doc('spesa/'+ex.id).update({...d,dove:x.dove||ex.dove||'',urgente:!!x.urgente||(!ex.done&&!!ex.urgente),urgDate:x.urgente?today:(ex.urgDate||''),...sig('mod')});else await db.collection('spesa').add({...d,createdAt:new Date().toISOString(),...sig('add')});n++}catch(err){toast(errMsg(err));break}}
+  closeAll();toast(n+' voci aggiunte alla spesa')});
+$('#spClr').addEventListener('click',async()=>{if(!db)return;for(const x of spesa.filter(x=>x.done)){try{await db.doc('spesa/'+x.id).delete()}catch(e){}}toast('Comprati tolti dalla lista')});
+
+/* ---- registro attività ---- */
+let logRows=[],logReq=[];
+async function buildLog(){
+  if(!hist)await loadHist();
+  try{const s=await db.collection('richieste').limit(1000).get();logReq=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){}
+  const rows=[],src=new Map(hist||[]);for(const m of[all,old])for(const[id,b]of m)src.set(id,b);
+  for(const[id,b]of src){const t=`${b.name} · ${fmtShort(b.date)} ${b.time} · ${b.people}p`;
+    if(b.createdAt&&!(b.log||[]).some(l=>/^Creat|^Confermat/.test(l.a)))rows.push({at:b.createdAt,by:b.createdBy||'',k:'Prenotazione',o:t,a:'Creata'});
+    for(const l of (b.log||[]))rows.push({at:l.at,by:l.by||'',k:'Prenotazione',o:t,a:l.a})}
+  for(const r of logReq){const t=`${r.name} · ${r.date} ${r.time} · ${r.people}p`;if(r.gesBy)rows.push({at:r.gesAt||'',by:r.gesBy,k:'Richiesta',o:t,a:{confermata:'Confermata',rifiutata:'Rifiutata',attesa:'Proposto altro orario'}[r.stato]||r.stato})}
+  for(const x of spesa){const t=x.text;if(x.addBy)rows.push({at:x.addAt,by:x.addBy,k:'Spesa',o:t,a:'Aggiunta'});if(x.modBy)rows.push({at:x.modAt,by:x.modBy,k:'Spesa',o:t,a:'Modificata'});if(x.urgBy)rows.push({at:x.urgAt,by:x.urgBy,k:'Spesa',o:t,a:x.urgente?'Segnata urgente':'Tolta urgenza'});if(x.doneBy)rows.push({at:x.doneAt,by:x.doneBy,k:'Spesa',o:t,a:'Comprata'})}
+  logRows=rows.filter(r=>r.at).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+  const users=[...new Set(logRows.map(r=>r.by).filter(Boolean))].sort();
+  const cur=$('#logU').value;$('#logU').innerHTML='<option value="">Tutti gli utenti</option>'+users.map(u=>`<option ${u===cur?'selected':''}>${esc(u)}</option>`).join('');
+  renderLog();
+}
+const logF=()=>logRows.filter(r=>(!$('#logU').value||r.by===$('#logU').value)&&(!$('#logK').value||r.k===$('#logK').value));
+function renderLog(){const L=logF();$('#logInfo').textContent=L.length+' azioni';
+  $('#logList').innerHTML=L.slice(0,300).map(r=>`<li><span><b>${esc(r.by||'—')}</b> · ${esc(r.a)}<br><small style="color:var(--mute)">${esc(r.k)}: ${esc(r.o)}</small></span><span>${esc(fmtWhen(r.at))}</span></li>`).join('')}
+$('#logU').addEventListener('change',renderLog);$('#logK').addEventListener('change',renderLog);
+$('#logBtn').addEventListener('click',()=>{if(!isOwner())return;$('#logList').innerHTML='<li><span>Carico…</span></li>';$('#logSheet').classList.add('open');buildLog()});
+$('#logExp').addEventListener('click',()=>{const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const rows=[['Data e ora','Utente','Tipo','Cosa','Azione']].concat(logF().map(r=>[new Date(r.at).toLocaleString('it-IT'),r.by,r.k,r.o,r.a]));
+  const blob=new Blob(['\ufeff'+rows.map(r=>r.map(q).join(';')).join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='registro-blackout-'+today+'.csv';document.body.appendChild(a);a.click();a.remove()});
+
 /* ---- conferma automatica ---- */
 const accepting=new Set();
 async function autoAccept(r){
   if(accepting.has(r.id)||!db)return;accepting.add(r.id);
   const now=new Date().toISOString();
-  try{await db.doc('bookings/r_'+r.id).set({name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,tables:[],source:r.source||'Sito',status:'confermata',notes:r.notes||'',sconto:'',online:true,createdAt:now,updatedAt:now});
-    await db.doc('richieste/'+r.id).update({stato:'confermata'})}catch(e){accepting.delete(r.id)}
+  try{await db.doc('bookings/r_'+r.id).set({name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,tables:[],source:r.source||'Sito',status:'confermata',notes:r.notes||'',sconto:'',online:true,createdAt:now,createdBy:'online',updatedAt:now,log:[{a:'Confermata online in automatico',by:'cliente',at:now}]});
+    await db.doc('richieste/'+r.id).update({stato:'confermata',gesBy:'automatico',gesAt:now})}catch(e){accepting.delete(r.id)}
 }
 /* ---- disponibilità pubblica (orari pieni) ---- */
 let occLast='',occT=null;
@@ -908,7 +1162,7 @@ function renderReq(){
     const okMsg=`Ciao ${r.name}, ti confermiamo il tavolo al Black-Out per ${r.people} ${+r.people===1?'persona':'persone'} ${giorno} alle ${r.time}. Ti aspettiamo!`;
     const altMsg=`Ciao ${r.name}, ${giorno} alle ${r.time} siamo al completo per ${r.people} persone. `+(alt.length?`Possiamo offrirti un tavolo alle ${alt.join(', alle ')}. Quale preferisci?`:'Possiamo provare un altro giorno?');
     const noMsg=`Ciao ${r.name}, ci dispiace ma ${giorno} siamo al completo. Speriamo di vederti presto al Black-Out!`;
-    return `<article class="bk" data-rid="${esc(r.id)}"><div class="pp"><b>${esc(r.people)}</b><small>pers.</small></div><div class="info"><h3>${esc(r.name)}${+r.people>cal.autoMax?' <span class="ctag">Gruppo</span>':''}${r.stato==='attesa'?' <span class="wait">alternativa inviata</span>':''}</h3>
+    return `<article class="bk" data-rid="${esc(r.id)}"><div class="pp"><b>${esc(r.people)}</b><small>pers.</small></div><div class="info"><h3>${esc(r.name)}${+r.people>cal.autoMax?' <span class="ctag">Gruppo</span>':''}${r.stato==='attesa'?` <span class="wait">alternativa inviata${r.gesBy?' da '+esc(r.gesBy):''}</span>`:''}</h3>
     <p class="meta">${esc(fmtLong(r.date))} · ${esc(r.time)} · ${esc(r.source||'Sito')} · ${esc(r.phone)}</p>
     <p class="meta">${a?`Tavolo libero: <span class="tbl">${esc(a.ids.join('+'))}</span>${a.tight?' · stretti':''}`:`<span class="nt">Pieno a quest'ora</span>${alt.length?' · liberi: '+alt.join(', '):''}`}</p>
     ${r.notes?`<p class="note">${esc(r.notes)}</p>`:''}</div>
@@ -916,8 +1170,8 @@ function renderReq(){
 }
 async function confirmReq(r,data){
   const now=new Date().toISOString();
-  await db.collection('bookings').add({name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,tables:[],source:r.source||'Sito',status:'confermata',notes:r.notes||'',sconto:'',createdAt:now,updatedAt:now,...(data||{})});
-  await db.doc('richieste/'+r.id).update({stato:'confermata'});
+  await db.collection('bookings').add(withLog(null,'Confermata (richiesta online)',{name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,tables:[],source:r.source||'Sito',status:'confermata',notes:r.notes||'',sconto:'',createdAt:now,createdBy:who(),updatedAt:now,...(data||{})}));
+  await db.doc('richieste/'+r.id).update({stato:'confermata',...sig('ges')});
 }
 $('#req').addEventListener('click',async e=>{
   const b=e.target.closest('[data-r]');if(!b||!db)return;
@@ -926,8 +1180,8 @@ $('#req').addEventListener('click',async e=>{
   try{
     if(k==='ok'||k==='ok0'){await confirmReq(r);toast('Prenotazione confermata');}
     else if(k==='edit'){rEdit=r;openForm(null,{name:r.name,phone:r.phone,people:+r.people,date:r.date,time:r.time,notes:r.notes||'',source:SRC.includes(r.source)?r.source:'Sito'});qEdit=null;rEdit=r}
-    else if(k==='alt'){await db.doc('richieste/'+r.id).update({stato:'attesa'})}
-    else if(k==='no'||k==='no0'){await db.doc('richieste/'+r.id).update({stato:'rifiutata'});toast('Richiesta rifiutata')}
+    else if(k==='alt'){await db.doc('richieste/'+r.id).update({stato:'attesa',...sig('ges')})}
+    else if(k==='no'||k==='no0'){await db.doc('richieste/'+r.id).update({stato:'rifiutata',...sig('ges')});toast('Richiesta rifiutata')}
   }catch(err){toast(errMsg(err))}
 });
 
@@ -1005,7 +1259,7 @@ function renderQ(){
 }
 async function saveQ(x){
   const now=new Date().toISOString();
-  await db.collection('bookings').add({name:x.name,phone:x.phone,people:x.people,date:x.date,time:x.time,tables:[],source:x.source,status:'confermata',notes:x.notes,sconto:x.sconto||'',createdAt:now,updatedAt:now});
+  await db.collection('bookings').add({name:x.name,phone:x.phone,people:x.people,date:x.date,time:x.time,tables:[],source:x.source,status:'confermata',notes:x.notes,sconto:x.sconto||'',createdAt:now,createdBy:who(),updatedAt:now,log:[{a:'Creata (inserimento veloce)',by:who(),at:now}]});
 }
 $('#qOut').addEventListener('click',async e=>{
   const b=e.target.closest('[data-q]');if(!b)return;
@@ -1025,6 +1279,7 @@ $('#qOut').addEventListener('click',async e=>{
 render();
 
 /* ---- sync ---- */
+setTimeout(function t(){if(window.__who){$('#whoT').textContent=window.__who+' ·'}else setTimeout(t,500)},500);
 (async()=>{
   if(typeof claude==='undefined'||!claude.use){setSync('off','Offline');banner('Sincronizzazione non disponibile.');ready=true;render();return}
   db=await claude.use('db');
@@ -1036,6 +1291,8 @@ render();
     render();
   },err=>{clearTimeout(timer);ready=true;setSync('err','Errore');banner('Collegamento interrotto ('+err.code+'). Ricarica la pagina.');render()});
   db.doc('pubblico/calendario').onSnapshot(s=>{if(s.exists){const d=s.data();cal={chiusoSett:Array.isArray(d.chiusoSett)?d.chiusoSett.map(Number):[1],orari:Array.isArray(d.orari)&&d.orari.length?d.orari.map(String):DEF_ORARI,giorni:d.giorni&&typeof d.giorni==='object'?d.giorni:{},autoMax:Number.isFinite(+d.autoMax)?+d.autoMax:6,soloRichSett:Array.isArray(d.soloRichSett)?d.soloRichSett.map(Number):[6]}}render()},()=>{});
+  db.doc('config/catalogo').onSnapshot(s=>{if(s.exists&&Array.isArray(s.data().items)&&s.data().items.length){catalogo=s.data().items.map(x=>({n:String(x.n),c:String(x.c||'Altro'),d:Array.isArray(x.d)?x.d:[]}))}if(tab==='spesa')renderSpesa()},()=>{});
+  db.collection('spesa').onSnapshot(s=>{spesa=s.docs.map(d=>({id:d.id,...d.data()}));if(tab==='spesa')renderSpesa()},()=>{});
   db.collection('clienti').onSnapshot(s=>{cMeta={};s.docs.forEach(d=>cMeta[d.id]=d.data());_ver++;render()},()=>{});
   let reqFirst=true,seen=new Set();
   db.collection('richieste').where('stato','in',['nuova','attesa']).onSnapshot(s=>{reqs=s.docs.map(d=>({id:d.id,...d.data()}));
@@ -1076,7 +1333,7 @@ const db={doc:p=>wD(F.doc(fs,p)),collection:col};
 const L=document.getElementById('login'),err=document.getElementById('lErr');
 let started=false;
 A.onAuthStateChanged(auth,u=>{
-  if(u){L.classList.add('hide');if(!started){started=true;window.__setDb(db)}}
+  if(u){window.__who=(u.email||'').split('@')[0];document.body.classList.toggle('staff',window.__who!=='titolare');L.classList.add('hide');if(!started){started=true;window.__setDb(db)}}
   else{if(started)location.reload();L.classList.remove('hide');err.textContent=''}
 });
 document.getElementById('lf').addEventListener('submit',async e=>{
