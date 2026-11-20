@@ -306,9 +306,28 @@ body{padding-bottom:96px}
 .bk.row .lg{margin:4px 0 0;font-size:12px;color:var(--mute)}.bk.row .note{margin:4px 0 0;font-size:14px}
 .req,.quick{margin-top:12px}
 .bk.row{position:relative;overflow:hidden;padding:0!important;touch-action:pan-y}
+.bk.row .rin{padding:9px 2px!important}
+.bk.row .r1{display:flex;align-items:center;gap:6px;min-height:34px}
+.bk.row .nm{flex:1 1 auto;min-width:0;font-size:16px!important;font-weight:600}
+.bk.row .dt{font-size:12px;color:var(--mute);white-space:nowrap}
+.bk.row .scm{font-style:normal;font-size:11px;font-weight:800;color:#06210f;background:#2fbf71;border-radius:6px;padding:1px 5px;flex:none}
+.bk.row .vipm{font-style:normal;font-size:11px;font-weight:800;color:#111;background:#f5a623;border-radius:6px;padding:1px 5px;flex:none}
+.bk.row .alm{font-style:normal;font-size:12px;font-weight:900;color:#fff;background:#b3122e;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.bk.row .src{flex:none}
+.bk.row .dot{width:7px;height:7px;border-radius:50%;background:var(--acc);flex:none}
+.bk.row .rt{font-size:15px!important;flex:none;white-space:nowrap;color:var(--mute)}
+.bk.row .rp{font-size:15px!important;flex:none;min-width:34px!important}
+.bk.row .stp{min-height:30px!important;padding:0 10px!important;font-size:13px!important;border-radius:9px!important;min-width:76px}
+.bk.row .rx{display:none;padding:6px 0 2px}.bk.row.exp .rx{display:block}
+.bk.row .rx .tg{display:flex;flex-wrap:wrap;gap:4px}.bk.row .rx .tg .ctag,.bk.row .rx .tg .tag{margin-left:0}
+.bk.row .rxb{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.bk.row .rxb .btn{min-height:38px;padding:0 12px;font-size:14px;display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
+.bk.row.exp{background:var(--panel)}.bk.row.exp .rin{background:var(--panel)}
+.tgh{cursor:pointer;padding:6px 0!important}.tpl{font-size:18px!important;padding:2px 12px!important}.tgi{font-size:15px!important}
+.tgh .chev{margin-left:auto;font-size:18px;transition:transform .2s}.tgr.col .chev{transform:rotate(180deg)}.tgr.col .bk.row{display:none}
+.tgr{margin-top:6px!important}
 .bk.row .rin{position:relative;z-index:1;background:var(--bg);padding:12px 2px;transition:transform .18s ease}
 .bk.row.drag .rin{transition:none}
-.bk.row::before{content:attr(data-sw);position:absolute;inset:0;display:flex;align-items:center;padding:0 18px;font-weight:800;font-size:16px;color:#111;background:var(--swc,transparent)}
+.bk.row::before{color:#fff!important;content:attr(data-sw);position:absolute;inset:0;display:flex;align-items:center;padding:0 18px;font-weight:800;font-size:16px;color:#111;background:var(--swc,transparent)}
 .bk.row.swl::before{justify-content:flex-end}
 .stgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
 .stgrid button{display:flex;align-items:center;gap:10px;min-height:56px;padding:0 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);font-weight:800;font-size:16px;text-align:left}
@@ -546,6 +565,14 @@ body{padding-bottom:96px}
     <div class="row"><button type="button" class="btn" id="stOpen">Apri scheda</button><button type="button" class="btn" data-close>Chiudi</button></div>
   </div>
 </div>
+<div class="sheet" id="cxSheet" role="dialog" aria-modal="true" aria-labelledby="cxT">
+  <div class="panel">
+    <h2 id="cxT">Cancellare la prenotazione?</h2>
+    <p class="meta" id="cxM"></p>
+    <p class="hint">Resta nello storico con il tuo nome e si può ripristinare dalla scheda.</p>
+    <div class="row"><button type="button" class="btn" id="cxOk" style="background:#e5484d;border-color:#e5484d;color:#fff;flex:1">Cancella prenotazione</button><button type="button" class="btn" data-close style="flex:1">Annulla</button></div>
+  </div>
+</div>
 <div class="sheet" id="setSheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
   <form class="panel" id="setForm">
     <h2 id="sTitle">Impostazioni sala</h2>
@@ -664,17 +691,24 @@ function waLink(b){
   const msg=`Ciao ${b.name}, ti confermiamo la prenotazione al Blackout Pub per ${b.people} ${+b.people===1?'persona':'persone'} ${fmtLong(b.date).toLowerCase()} alle ${b.time}. A presto!`;
   return 'https://wa.me/'+d+'?text='+encodeURIComponent(msg);
 }
+let expIds=new Set(),colT=new Set();
 const IC_TBL='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-5 9 5-9 5z"/><path d="M5 10v8M19 10v8M12 14v6"/></svg>',IC_PER='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
 function card(b,showDate,P){
   const st=b.status||'confermata';
   const a=P&&P.as.get(b.id);
   const tl=!active(b)?'':a?`<span class="tbl">${esc(a.ids.join('+'))}</span>${a.man?'':' (auto)'}${a.tight?' · stretti, con capotavola':''}`:P?'<span class="nt">Senza tavolo</span>':'';
-  const c=cIndex().get(ckey(b));
-  const tbl=!active(b)?'':a?esc(a.ids.length>2?a.ids[0]+'…'+a.ids[a.ids.length-1]+' ('+a.ids.length+')':a.ids.join('+')):P?'<span class="nt">—</span>':'';
-  return `<article class="bk row st-${esc(st)}" data-id="${esc(b.id)}"><div class="rin">
-  <div class="r1"><b class="nm">${esc(c?cName(c):b.name)}</b>${tbl?`<span class="rt${a&&a.man?' lk':''}">${IC_TBL}${tbl}</span>`:''}<span class="rp">${esc(b.people)}p</span></div>
-  <div class="r2"><span class="tg">${b.source==='TheFork'?'<em class="src tf">TF</em>':b.online?'<em class="src on">online</em>':''}${ctags(c,true)}${b.sconto?`<span class="tag sc">${esc(b.sconto)}</span>`:''}${b.occasione?`<span class="tag">${esc(b.occasione)}</span>`:''}</span><button type="button" class="stp" data-act="st" style="--c:${STC[st]}">${esc(STL[st]||'')}</button></div>
-  ${showDate?`<p class="meta">${esc(fmtShort(b.date)+' · '+b.time)}</p>`:''}${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}${(b.log||[]).length?`<p class="lg">${esc(b.log[b.log.length-1].a)} · ${esc(b.log[b.log.length-1].by||'')} ${esc(fmtWhen(b.log[b.log.length-1].at).split(' ')[1]||'')}</p>`:''}
+  const c=cIndex().get(ckey(b)),m=(c&&c.meta)||{};
+  const tbl=!active(b)?'':a?esc(a.ids.length>2?a.ids[0]+'…'+a.ids[a.ids.length-1]:a.ids.join('+')):P?'—':'';
+  const tags=ctags(c,true)+(b.occasione?`<span class="tag">${esc(b.occasione)}</span>`:'');
+  const al=(m.tags||[]).some(t=>TAGC[t]==='al');
+  const info=!!(b.notes||tags||m.note);
+  const SS={confermata:'Prenotato',parziale:'Parziale',arrivata:'Arrivato',tavolo:'Al tavolo',conto:'Conto',liberato:'Liberato',noshow:'No-show',cancellata:'Cancellata'};
+  return `<article class="bk row st-${esc(st)}${expIds.has(b.id)?' exp':''}" data-id="${esc(b.id)}"><div class="rin">
+  <div class="r1">${showDate?`<span class="dt">${esc(fmtShort(b.date).slice(4))} ${esc(b.time)}</span>`:''}<b class="nm">${esc(c?cName(c):b.name)}</b>${b.source==='TheFork'&&!b.sconto?'<em class="src tf">TF</em>':''}${b.sconto?`<em class="scm">${esc(b.sconto)}</em>`:''}${m.vip?'<em class="vipm">VIP</em>':''}${al?'<em class="alm" title="Allergie">!</em>':''}${info?'<i class="dot" title="Note e tag"></i>':''}
+  <span class="rt${a&&a.man?' lk':''}">${tbl}</span><span class="rp">${esc(b.people)}p</span><button type="button" class="stp" data-act="st" style="--c:${STC[st]}">${SS[st]||''}</button></div>
+  <div class="rx">${tags?`<div class="tg">${tags}${b.online?'<em class="src on">online</em>':''}</div>`:''}${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}${m.note?`<p class="note">Cliente: ${esc(m.note)}</p>`:''}
+  <p class="lg">${esc(b.source==='TheFork'?'TheFork':b.source||'')}${b.phone?' · '+esc(b.phone):''}${(b.log||[]).length?' · '+esc(b.log[b.log.length-1].a)+' da '+esc(b.log[b.log.length-1].by||'')+' '+esc(fmtWhen(b.log[b.log.length-1].at).split(' ')[1]||''):''}</p>
+  <div class="rxb"><button type="button" class="btn" data-act="edit">Apri scheda</button>${b.phone?`<a class="btn" href="tel:${esc(String(b.phone).replace(/[^\d+]/g,''))}">Chiama</a><a class="btn" href="${esc(waLink(b))}" target="_blank" rel="noopener">WhatsApp</a>`:''}</div></div>
   </div></article>`;
 }
 function render(){
@@ -714,7 +748,7 @@ function render(){
   const P=plan(sel);renderSala(P,list);if(reqs.length)renderReq();
   if(!list.length){L.innerHTML='<p class="empty">Nessuna prenotazione per questo giorno.<br>Tocca “+ Nuova prenotazione” per aggiungerne una.</p>';return}
   const groups=new Map();for(const b of list){if(!groups.has(b.time))groups.set(b.time,[]);groups.get(b.time).push(b)}
-  L.innerHTML=[...groups].map(([t,g])=>`<section class="tgr"><div class="tgh"><span class="tpl">${esc(t||'—')}</span><span class="tgi">${IC_TBL.replace('16','18').replace('16','18')} ${g.filter(active).length}</span><span class="tgi">${IC_PER} ${covers(g)}p</span></div>${g.map(b=>card(b,false,P)).join('')}</section>`).join('');
+  L.innerHTML=[...groups].map(([t,g])=>`<section class="tgr${colT.has(t)?' col':''}" data-tg="${esc(t)}"><div class="tgh" data-tgh="${esc(t)}"><span class="tpl">${esc(t||'—')}</span><span class="tgi">${IC_TBL.replace('16','18').replace('16','18')} ${g.filter(active).length}</span><span class="tgi">${IC_PER} ${covers(g)}p</span><span class="chev">⌃</span></div>${g.map(b=>card(b,false,P)).join('')}</section>`).join('');
 }
 /* ---- servizio: chiusure e online ---- */
 const DEF_ORARI=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'];
@@ -848,7 +882,8 @@ $('#list').addEventListener('click',async e=>{
   const rw=e.target.closest('.bk.row');if(rw&&rw.dataset.justSwiped)return;
   const b0=e.target.closest('[data-act="st"]');if(b0){openSt(b0.closest('[data-id]').dataset.id);return}
   const b=e.target.closest('[data-act]');
-  if(!b){const c=e.target.closest('[data-id]');if(c)openBk(c.dataset.id);return}
+  const th=e.target.closest('[data-tgh]');if(th){const t=th.dataset.tgh;colT.has(t)?colT.delete(t):colT.add(t);th.parentElement.classList.toggle('col');return}
+  if(!b){const c=e.target.closest('[data-id]');if(c){const id=c.dataset.id;expIds.has(id)?expIds.delete(id):expIds.add(id);c.classList.toggle('exp')}return}
   const id=b.closest('[data-id]').dataset.id,cur=getB(id);if(!cur)return;
   if(b.dataset.act==='edit')return openBk(id);
   const target=b.dataset.act==='arr'?'arrivata':'noshow';
@@ -1217,6 +1252,8 @@ $('#logExp').addEventListener('click',()=>{const q=v=>'"'+String(v??'').replace(
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='registro-blackout-'+today+'.csv';document.body.appendChild(a);a.click();a.remove()});
 
 /* ---- stato rapido: menu e swipe ---- */
+let cxId=null;
+function askCancel(id){const b=getB(id);if(!b)return;cxId=id;$('#cxM').textContent=`${b.name} · ${fmtShort(b.date)} alle ${b.time} · ${b.people} persone`;$('#cxSheet').classList.add('open')}
 const FLOW=['confermata','arrivata','tavolo','conto','liberato'];
 async function setStatus(id,st){const cur=getB(id);if(!cur||!db||cur.status===st)return;
   const d={status:st,updatedAt:new Date().toISOString(),...sig('stato')};
@@ -1228,6 +1265,7 @@ function openSt(id){const b=getB(id);if(!b)return;stId=id;const st=b.status||'co
   $('#stG').innerHTML=STS.map(([k,l,c])=>`<button type="button" data-ss="${k}" class="${k===st?'on':''}"><i style="background:${c}"></i>${l}</button>`).join('');
   $('#stSheet').classList.add('open')}
 $('#stG').addEventListener('click',e=>{const b=e.target.closest('[data-ss]');if(!b||!stId)return;closeAll();setStatus(stId,b.dataset.ss)});
+$('#cxOk').addEventListener('click',()=>{const id=cxId;closeAll();if(id)setStatus(id,'cancellata')});
 $('#stOpen').addEventListener('click',()=>{const id=stId;closeAll();openBk(id)});
 (function(){let row=null,x0=0,y0=0,dx=0,on=false,lock=false;
   const L=$('#list');
@@ -1235,11 +1273,12 @@ $('#stOpen').addEventListener('click',()=>{const id=stId;closeAll();openBk(id)})
   L.addEventListener('touchmove',e=>{if(!row||lock)return;const x=e.touches[0].clientX-x0,y=e.touches[0].clientY-y0;
     if(!on){if(Math.abs(y)>12&&Math.abs(y)>Math.abs(x)){lock=true;return}if(Math.abs(x)<12)return;on=true;row.classList.add('drag')}
     dx=Math.max(-140,Math.min(140,x));const b=getB(row.dataset.id);if(!b)return;const i=FLOW.indexOf(b.status||'confermata');
-    const nx=dx>0?FLOW[Math.min(FLOW.length-1,i+1)]:FLOW[Math.max(0,i<0?0:i-1)];
-    row.dataset.sw=(dx>0?'→ ':'')+STL[nx]+(dx<0?' ←':'');row.style.setProperty('--swc',STC[nx]);row.classList.toggle('swl',dx<0);
+    if(dx>0){row.dataset.sw=b.status==='cancellata'?'Già cancellata':'Cancella';row.style.setProperty('--swc','#e5484d')}
+    else{const nx=FLOW[Math.min(FLOW.length-1,i<0?1:i+1)];row.dataset.sw=STL[nx]+' ←';row.style.setProperty('--swc',STC[nx])}
+    row.classList.toggle('swl',dx<0);
     row.querySelector('.rin').style.transform=`translateX(${dx}px)`},{passive:true});
   L.addEventListener('touchend',()=>{if(!row)return;const r=row;row=null;r.classList.remove('drag');r.querySelector('.rin').style.transform='';
-    if(on&&Math.abs(dx)>80){const b=getB(r.dataset.id);if(b){const i=FLOW.indexOf(b.status||'confermata');const nx=dx>0?FLOW[Math.min(FLOW.length-1,i+1)]:FLOW[Math.max(0,i<0?0:i-1)];setStatus(r.dataset.id,nx)}
+    if(on&&Math.abs(dx)>80){const b=getB(r.dataset.id);if(b){if(dx>0){if(b.status!=='cancellata')askCancel(r.dataset.id)}else{const i=FLOW.indexOf(b.status||'confermata');setStatus(r.dataset.id,FLOW[Math.min(FLOW.length-1,i<0?1:i+1)])}}
       r.dataset.justSwiped='1';setTimeout(()=>delete r.dataset.justSwiped,400)}
     setTimeout(()=>{delete r.dataset.sw;r.style.removeProperty('--swc')},200)});
 })();
