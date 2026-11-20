@@ -113,6 +113,15 @@ textarea{resize:vertical;min-height:70px}
 .tabs{display:flex;gap:4px;margin-top:18px;border-bottom:2px solid var(--ink)}
 .tabs button{min-height:46px;padding:0 18px;border:0;background:transparent;font-weight:700;border-radius:10px 10px 0 0;font-size:16px}
 .tabs button.on{background:var(--ink);color:var(--bg)}
+@media(max-width:600px){.tabs button{padding:0 12px;font-size:15px}}
+.ctag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:20px;margin-left:6px;vertical-align:2px;background:var(--bg);border:1px solid var(--line)}
+.ctag.vip{background:var(--acc);color:#111;border-color:var(--acc)}.ctag.ab{color:var(--ok);border-color:var(--ok)}.ctag.ns{color:#d93a2b;border-color:#d93a2b}.ctag.new{color:var(--mute)}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px;border-radius:14px;background:var(--panel);margin-top:10px;border:0;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.crow b{font-size:17px}.crow .n{font-size:24px;font-weight:800;font-stretch:75%;text-align:right;line-height:1}.crow .n small{display:block;font-size:12px;font-weight:500;color:var(--mute);font-stretch:100%}
+.crow .m{grid-column:1/-1;font-size:14px;color:var(--mute)}
+.hist{list-style:none;padding:0;margin:8px 0 0}.hist li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}.hist li span:last-child{color:var(--mute);white-space:nowrap}
+.cinfo{display:block;font-size:14px;color:var(--mute);margin:4px 0 0;font-weight:500}
+#cPh a{color:var(--ink);font-weight:700}
 .alert{background:light-dark(#fdeceb,#3a1615);border-left:4px solid #d93a2b;border-radius:8px;padding:10px 12px;margin-top:14px;font-size:15px}
 .good{background:var(--panel);border-left:4px solid var(--ok);border-radius:8px;padding:10px 12px;margin-top:14px;font-size:15px}
 h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
@@ -225,7 +234,7 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
     </div>
   </section>
   <section class="svc" id="svc"></section>
-  <div class="tabs" role="tablist"><button data-tab="list" class="on">Prenotazioni</button><button data-tab="sala">Sala e tavoli</button></div>
+  <div class="tabs" role="tablist"><button data-tab="list" class="on">Prenotazioni</button><button data-tab="sala">Sala e tavoli</button><button data-tab="cli">Clienti</button></div>
   <section class="req" id="req" hidden></section>
   <div class="quick" id="quick">
     <h2>Inserimento veloce</h2>
@@ -240,6 +249,11 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
   <input class="search" id="q" type="search" placeholder="Cerca per nome, telefono o nota…" autocomplete="off">
   <main id="list"></main>
   <section id="sala" hidden></section>
+  <section id="cli" hidden>
+    <div class="qrow" style="margin-top:16px"><input type="text" id="cq" placeholder="Cerca cliente per nome o telefono…" aria-label="Cerca cliente" style="flex:1 1 220px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font-size:16px"><button class="btn" id="cExp" type="button" style="flex:none">Esporta CSV</button></div>
+    <p class="lbl" id="cInfo" style="margin:8px 0 0"></p>
+    <div id="cList"></div>
+  </section>
 </div>
 
 <button class="fab" id="addBtn">+ Nuova</button>
@@ -248,7 +262,7 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
   <form class="panel" id="form" novalidate>
     <h2 id="fTitle">Nuova prenotazione</h2>
     <div class="fg">
-      <label class="w">Nome<input id="fName" required autocomplete="off"></label>
+      <label class="w">Nome<input id="fName" required autocomplete="off" list="cliList"><datalist id="cliList"></datalist><span class="cinfo" id="fCli"></span></label>
       <label>Telefono<input id="fPhone" type="tel" inputmode="tel" autocomplete="off"></label>
       <label>Persone<span class="step"><button type="button" data-step="-1" aria-label="Meno">−</button><input id="fPeople" type="number" min="1" max="200" value="2" inputmode="numeric"><button type="button" data-step="1" aria-label="Più">+</button></span></label>
       <label>Data<input id="fDate" type="date" required></label>
@@ -269,6 +283,18 @@ h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
   </form>
 </div>
 
+<div class="sheet" id="cliSheet" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="panel">
+    <h2 id="cTitle">Cliente</h2>
+    <p class="meta" id="cPh"></p>
+    <div class="stats" id="cStats" style="margin-top:12px"></div>
+    <label class="chk" style="display:flex;gap:8px;align-items:center;margin-top:14px;font-weight:700"><input type="checkbox" id="cVip" style="width:22px;height:22px;min-height:0;margin:0;accent-color:var(--acc)">Cliente VIP</label>
+    <label style="margin-top:12px">Note sul cliente (allergie, preferenze, tavolo preferito…)<textarea id="cNote"></textarea></label>
+    <div class="row"><button type="button" class="btn pri" id="cSave">Salva</button><button type="button" class="btn" id="cBook">Nuova prenotazione</button><button type="button" class="btn" data-close>Chiudi</button></div>
+    <h2 class="sec">Storico</h2>
+    <ul class="hist" id="cHist"></ul>
+  </div>
+</div>
 <div class="sheet" id="setSheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
   <form class="panel" id="setForm">
     <h2 id="sTitle">Impostazioni sala</h2>
@@ -379,7 +405,7 @@ function card(b,showDate,P){
   const tl=!active(b)?'':a?`<span class="tbl">${esc(a.ids.join('+'))}</span>${a.man?'':' (auto)'}${a.tight?' · stretti, con capotavola':''}`:P?'<span class="nt">Senza tavolo</span>':'';
   return `<article class="bk st-${esc(st)}" data-id="${esc(b.id)}">
   <div class="pp"><b>${esc(b.people)}</b><small>pers.</small></div>
-  <div class="info"><h3>${esc(b.name)}${b.sconto?`<span class="tag sc">${esc(b.sconto)}</span>`:''}${ST[st]?`<span class="tag">${ST[st]}</span>`:''}</h3>
+  <div class="info"><h3>${esc(b.name)}${ctags(cIndex().get(ckey(b)),true)}${b.sconto?`<span class="tag sc">${esc(b.sconto)}</span>`:''}${ST[st]?`<span class="tag">${ST[st]}</span>`:''}</h3>
   <p class="meta">${showDate?esc(fmtShort(b.date)+' · '+b.time)+' · ':''}${tl?'Tavolo '+tl+' · ':''}${esc(b.source==='TheFork'?'TF':b.source||'')}</p>
   ${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}
   ${b.phone?`<p class="ph"><a href="tel:${esc(String(b.phone).replace(/[^\d+]/g,''))}">${esc(b.phone)}</a> · <a href="${esc(waLink(b))}" target="_blank" rel="noopener">WhatsApp</a></p>`:''}</div>
@@ -402,7 +428,7 @@ function render(){
   $('#sA').textContent=list.filter(b=>b.status==='arrivata').reduce((s,b)=>s+(+b.people||0),0);
   $('#sF').textContent=Math.max(0,cfg.capacity-cv);
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
-  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#req').hidden=tab!=='list'||!reqs.length;$('#sala').hidden=tab!=='sala';
+  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#req').hidden=tab!=='list'||!reqs.length;$('#sala').hidden=tab!=='sala';$('#cli').hidden=tab!=='cli';if(tab==='cli')renderCli();
   const L=$('#list');
   if(!ready){L.innerHTML='<p class="empty">Caricamento prenotazioni…</p>';return}
   if(q){
@@ -509,7 +535,7 @@ function openForm(id,pre){
   $('#fName').value=b.name||'';$('#fPhone').value=b.phone||'';$('#fPeople').value=b.people||2;$('#fDate').value=b.date||sel;$('#fTime').value=b.time||'';
   fSel=new Set(id?manualIds(b):[]);tchips();$('#fSource').value=SRC.includes(b.source)?b.source:'Altro';$('#fStatus').value=b.status||'confermata';$('#fNotes').value=b.notes||'';$('#fSconto').value=b.sconto||'';
   $('#fDel').hidden=!id;$('#fDel').textContent='Elimina';
-  chips();hint();$('#sheet').classList.add('open');setTimeout(()=>$('#fName').focus(),50);
+  chips();hint();fillCliList();cliInfo();$('#sheet').classList.add('open');setTimeout(()=>$('#fName').focus(),50);
 }
 const closeAll=()=>document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeAll));
@@ -589,6 +615,69 @@ $('#setForm').addEventListener('submit',async e=>{
   await saveCal({...cal,chiusoSett,orari:orari.length?orari:DEF_ORARI});
   try{await db.doc('config/settings').set({capacity,turni:turni.length?turni:cfg.turni,dur:Math.max(30,+$('#sDur').value||90),durSab:Math.max(30,+$("#sDurSab").value||70),buffer:Math.max(0,+$('#sBuf').value||0),heads:Math.max(0,+$('#sHeads').value||0),tables});closeAll();toast('Impostazioni salvate')}catch(err){toast(errMsg(err))}
 });
+
+/* ---- clienti ---- */
+let hist=null,histLoading=false,cMeta={},cOpen=null,_ci=null,_ciKey='';
+function ckey(b){const d=String(b.phone||'').replace(/\D/g,'');const p=d.length>10&&d.startsWith('39')?d.slice(2):d.length>10&&d.startsWith('0039')?d.slice(4):d;return p.length>=8?'t'+p:'n'+norm(String(b.name||'')).replace(/[^a-z0-9]/g,'')}
+function cIndex(){
+  const sig=(hist?hist.size:0)+'|'+all.size+'|'+old.size+'|'+_ver;
+  if(_ci&&_ciKey===sig)return _ci;
+  const src=new Map(hist||[]);for(const m of[all,old])for(const[id,b]of m)src.set(id,b);
+  const M=new Map();
+  for(const[id,b]of src){const k=ckey(b);if(k==='n')continue;let c=M.get(k);if(!c){c={key:k,name:b.name,phone:b.phone||'',list:[],visits:0,noshow:0,covers:0,last:'',next:'',_d:''};M.set(k,c)}
+    c.list.push({id,...b});const st=b.status||'confermata';
+    if(b.date>=c._d){c._d=b.date;c.name=b.name}if(b.phone)c.phone=b.phone;
+    if(st==='noshow')c.noshow++;
+    else if(st==='arrivata'||(st==='confermata'&&b.date<today)){c.visits++;c.covers+=+b.people||0;if(b.date>c.last)c.last=b.date}
+    if(st==='confermata'&&b.date>=today&&(!c.next||b.date<c.next))c.next=b.date}
+  for(const c of M.values()){c.meta=cMeta[c.key]||{};c.list.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time))}
+  _ci=M;_ciKey=sig;return M;
+}
+let _ver=0;
+function ctags(c,compact){if(!c)return'';let h='';if(c.meta&&c.meta.vip)h+='<span class="ctag vip">VIP</span>';
+  if(c.visits>=3)h+='<span class="ctag ab">Abituale</span>';else if(!compact&&c.visits===0&&!c.noshow&&c.list.length<=1)h+='<span class="ctag new">Nuovo</span>';
+  if(c.noshow)h+=`<span class="ctag ns">${c.noshow} no-show</span>`;return h}
+async function loadHist(){
+  if(hist||histLoading||!db)return;histLoading=true;$('#cInfo').textContent='Carico lo storico…';
+  try{const s=await db.collection('bookings').orderBy('date','desc').limit(1000).get();hist=new Map(s.docs.map(d=>[d.id,d.data()]))}catch(e){toast('Storico non disponibile')}
+  histLoading=false;renderCli();render();
+}
+function renderCli(){
+  if(!hist)loadHist();
+  const k=norm($('#cq').value.trim()),kd=$('#cq').value.replace(/\D/g,'');
+  let L=[...cIndex().values()];
+  if(k)L=L.filter(c=>norm(String(c.name)).includes(k)||(kd.length>=3&&String(c.phone).replace(/\D/g,'').includes(kd)));
+  L.sort((a,b)=>(+!!b.meta.vip)-(+!!a.meta.vip)||b.visits-a.visits||(b.last||b.next).localeCompare(a.last||a.next));
+  $('#cInfo').textContent=histLoading?'Carico lo storico…':`${L.length} clienti${hist?'':' (ultimi 60 giorni)'}`;
+  $('#cList').innerHTML=L.slice(0,300).map(c=>`<button class="crow" data-ck="${esc(c.key)}"><span><b>${esc(c.name)}</b>${ctags(c)}</span><span class="n">${c.visits}<small>visite</small></span><span class="m">${c.phone?esc(c.phone)+' · ':''}${c.covers} coperti${c.last?' · ultima '+esc(fmtShort(c.last)):''}${c.next?' · prossima '+esc(fmtShort(c.next)):''}${c.meta.note?' · '+esc(c.meta.note):''}</span></button>`).join('')||'<p class="empty">Nessun cliente trovato.</p>';
+}
+$('#cq').addEventListener('input',renderCli);
+$('#cList').addEventListener('click',e=>{const b=e.target.closest('[data-ck]');if(b)openCli(b.dataset.ck)});
+function openCli(k){
+  const c=cIndex().get(k);if(!c)return;cOpen=c;
+  $('#cTitle').innerHTML=esc(c.name)+ctags(c);
+  $('#cPh').innerHTML=c.phone?`<a href="tel:${esc(String(c.phone).replace(/[^\d+]/g,''))}">${esc(c.phone)}</a> · <a href="${esc(waTo(c.phone,'Ciao '+c.name+', '))}" target="_blank" rel="noopener">WhatsApp</a>`:'Nessun telefono';
+  $('#cStats').innerHTML=`<div><b>${c.visits}</b><span>visite</span></div><div><b>${c.covers}</b><span>coperti</span></div><div><b>${c.noshow}</b><span>no-show</span></div>`;
+  $('#cVip').checked=!!c.meta.vip;$('#cNote').value=c.meta.note||'';
+  const SN={confermata:'confermata',arrivata:'arrivato',noshow:'no-show',cancellata:'cancellata'};
+  $('#cHist').innerHTML=c.list.map(b=>`<li><span>${esc(fmtShort(b.date))} · ${esc(b.time)} · ${esc(b.people)}p${b.sconto?' · '+esc(b.sconto):''}</span><span>${esc(SN[b.status||'confermata'])} · ${esc(b.source==='TheFork'?'TF':b.source||'')}</span></li>`).join('');
+  $('#cliSheet').classList.add('open');
+}
+$('#cSave').addEventListener('click',async()=>{if(!cOpen||!db)return;try{await db.doc('clienti/'+cOpen.key).set({name:cOpen.name,phone:cOpen.phone||'',vip:$('#cVip').checked,note:$('#cNote').value.trim()});closeAll();toast('Cliente salvato')}catch(e){toast(errMsg(e))}});
+$('#cBook').addEventListener('click',()=>{if(!cOpen)return;const c=cOpen;closeAll();openForm(null,{name:c.name,phone:c.phone||'',notes:c.meta.note||''})});
+$('#cExp').addEventListener('click',()=>{
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const rows=[['Nome','Telefono','Visite','Coperti','No-show','Ultima visita','Prossima','VIP','Note']].concat([...cIndex().values()].map(c=>[c.name,c.phone,c.visits,c.covers,c.noshow,c.last,c.next,c.meta.vip?'si':'',c.meta.note||'']));
+  const blob=new Blob(['\ufeff'+rows.map(r=>r.map(q).join(';')).join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='clienti-blackout-'+today+'.csv';document.body.appendChild(a);a.click();a.remove();
+});
+function fillCliList(){$('#cliList').innerHTML=[...cIndex().values()].slice(0,500).map(c=>`<option value="${esc(c.name)}">${esc(c.phone||'')}</option>`).join('')}
+function cliInfo(){const n=$('#fName').value.trim(),ph=$('#fPhone').value;let c=null;const M=cIndex();
+  if(ph.replace(/\D/g,'').length>=8)c=M.get(ckey({phone:ph}));
+  if(!c&&n){const m=[...M.values()].filter(x=>norm(String(x.name))===norm(n));if(m.length===1)c=m[0]}
+  if(c&&!ph&&c.phone)$('#fPhone').value=c.phone;
+  $('#fCli').innerHTML=c?`Cliente già visto: ${c.visits} visite${c.noshow?', '+c.noshow+' no-show':''}${c.meta.vip?', VIP':''}${c.meta.note?' — '+esc(c.meta.note):''}`:'';}
+$('#fName').addEventListener('change',cliInfo);$('#fPhone').addEventListener('change',cliInfo);
 
 /* ---- richieste dal sito ---- */
 let reqs=[],rEdit=null;
@@ -730,6 +819,7 @@ render();
     render();
   },err=>{clearTimeout(timer);ready=true;setSync('err','Errore');banner('Collegamento interrotto ('+err.code+'). Ricarica la pagina.');render()});
   db.doc('pubblico/calendario').onSnapshot(s=>{if(s.exists){const d=s.data();cal={chiusoSett:Array.isArray(d.chiusoSett)?d.chiusoSett.map(Number):[1],orari:Array.isArray(d.orari)&&d.orari.length?d.orari.map(String):DEF_ORARI,giorni:d.giorni&&typeof d.giorni==='object'?d.giorni:{}}}render()},()=>{});
+  db.collection('clienti').onSnapshot(s=>{cMeta={};s.docs.forEach(d=>cMeta[d.id]=d.data());_ver++;render()},()=>{});
   db.collection('richieste').where('stato','in',['nuova','attesa']).onSnapshot(s=>{reqs=s.docs.map(d=>({id:d.id,...d.data()}));renderReq()},()=>{});
   db.doc('config/settings').onSnapshot(s=>{
     if(s.exists){const d=s.data();cfg={capacity:+d.capacity||72,turni:Array.isArray(d.turni)&&d.turni.length?d.turni.map(String):cfg.turni,dur:+d.dur||90,durSab:+d.durSab||70,buffer:Number.isFinite(+d.buffer)?+d.buffer:10,heads:Number.isFinite(+d.heads)?+d.heads:1,
