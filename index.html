@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackout Prenotazioni</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0d0c0a">
+<script>{let r;window.__dbP=new Promise(x=>r=x);window.__setDb=r;window.claude={use:async k=>k==='db'?window.__dbP:null};}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a working tool for a busy service floor — direct, legible at arm's length.
+   IDEA: the reservation book on the bar counter, times hanging in the margin.
+   PICTURE: the day itself — covers meter, week strip, bookings grouped by turn.
+   COLOUR and TYPE: logo black band, white/near-black ground, logo gold accent; Archivo, condensed for times.
+   LAYOUT: one column up to 860px, sticky ink header, bottom-sheet form, big touch targets. */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f0e14);--panel:light-dark(#f3f2f6,#1b1922);--line:light-dark(#e2e0e8,#2c2936);--ink:light-dark(#15131b,#f3f1f7);--mute:light-dark(#5f5a6b,#a8a2b4);--acc:#b8893a;--accInk:#111;--ok:light-dark(#18864a,#3ccf7e);--warn:light-dark(#b86e00,#ffb547);--band:#0d0c0a}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif;overflow-x:clip;padding-bottom:110px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding:0 max(4vw,14px)}
+.top{background:var(--band);color:#fff;position:sticky;top:0;z-index:5}
+.top .wrap{display:flex;align-items:center;gap:12px;min-height:58px}
+.brand{font-weight:800;font-stretch:80%;font-size:22px;letter-spacing:.01em;margin:0}
+.brand span{color:var(--acc)}.logo{height:42px;width:auto;display:block;filter:drop-shadow(0 0 1px #000)}@media(max-width:600px){.top .brand{display:none}}
+.sync{display:flex;align-items:center;gap:7px;font-size:13px;color:#cfcbd8;margin-left:auto}
+.dot{width:9px;height:9px;border-radius:50%;background:#888}
+.sync.ok .dot{background:#3ccf7e}.sync.warn .dot{background:#ffb547}.sync.err .dot,.sync.off .dot{background:var(--acc)}
+.ib{background:transparent;border:1px solid #3a3428;color:#fff;border-radius:10px;min-height:40px;padding:0 12px}
+.day{background:var(--band);color:#fff;padding:6px 0 18px}
+.nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav h1{font-size:clamp(28px,6vw,44px);line-height:1.05;margin:0;font-weight:800;font-stretch:85%;flex:1 1 220px}
+.nav h1 small{display:block;font-size:14px;font-weight:500;color:var(--acc);font-stretch:100%}
+.arw{width:44px;height:44px;border-radius:12px;border:1px solid #3a3428;background:#1d1a15;color:#fff;font-size:20px}
+.pick{min-height:44px;border-radius:12px;border:1px solid #3a3428;background:#1d1a15;color:#fff;padding:0 10px;color-scheme:dark}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:16px}
+.wd{background:#1d1a15;border:1px solid transparent;border-radius:12px;padding:8px 4px 9px;color:#fff;text-align:center;min-height:72px}
+.wd b{display:block;font-size:20px;font-stretch:80%;line-height:1.1}
+.wd i{display:block;font-style:normal;font-size:12px;color:#b8b3c4}
+.wd .bar{height:4px;border-radius:2px;background:#3a3428;margin:6px 6px 4px;overflow:hidden}
+.wd .bar span{display:block;height:100%;background:var(--acc)}
+.wd.on{background:#fff;color:var(--band)}.wd.on i{color:#5f5a6b}.wd.on .bar{background:#e2e0e8}
+.wd.td{border-color:var(--acc)}
+.sum{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;padding:20px 0 6px;align-items:end}
+.big{font-size:clamp(46px,11vw,76px);font-weight:800;font-stretch:75%;line-height:.95}
+.big small{font-size:.38em;color:var(--mute);font-weight:600;font-stretch:100%}
+.lbl{font-size:14px;color:var(--mute)}
+.meter{height:10px;border-radius:5px;background:var(--panel);margin-top:10px;overflow:hidden}
+.meter span{display:block;height:100%;background:var(--ink);transition:width .3s}
+.meter.over span{background:var(--acc)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stats div{background:var(--panel);border-radius:12px;padding:10px}
+.stats b{display:block;font-size:24px;font-stretch:80%;line-height:1.1}
+.stats span{font-size:13px;color:var(--mute)}
+.search{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font-size:16px;margin:16px 0 4px}
+.turn{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;border-top:2px solid var(--ink);padding:14px 0 6px;margin-top:14px}
+.tm{font-size:34px;font-weight:800;font-stretch:70%;line-height:1}
+.tm small{display:block;font-size:13px;font-weight:500;color:var(--mute);font-stretch:100%;margin-top:4px;white-space:nowrap}
+.bk{display:grid;grid-template-columns:54px minmax(0,1fr);gap:12px;padding:12px;border-radius:14px;background:var(--panel);margin-bottom:10px;border-left:5px solid var(--ink)}
+.bk.st-arrivata{border-left-color:var(--ok)}
+.bk.st-noshow{border-left-color:var(--warn);opacity:.75}
+.bk.st-cancellata{border-left-color:var(--line);opacity:.55}
+.bk.st-cancellata h3{text-decoration:line-through}
+.pp{text-align:center}.pp b{display:block;font-size:30px;font-stretch:75%;line-height:1}.pp small{font-size:12px;color:var(--mute)}
+.info h3{margin:0;font-size:18px;line-height:1.25}
+.meta,.note,.ph{margin:2px 0 0;font-size:14px;color:var(--mute)}
+.note{color:var(--ink)}
+.ph a{color:var(--ink);font-weight:600}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:20px;background:var(--bg);margin-left:6px;vertical-align:2px}
+.st-arrivata .tag{color:var(--ok)}.st-noshow .tag{color:var(--warn)}
+.acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.acts button{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:14px;font-weight:600}
+.acts button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.empty{padding:36px 0;text-align:center;color:var(--mute)}
+.fab{position:fixed;right:max(4vw,16px);bottom:max(20px,env(safe-area-inset-bottom));z-index:6;min-height:58px;padding:0 24px;border-radius:30px;border:0;background:var(--acc);color:var(--accInk);font-weight:800;font-size:17px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.ro .fab,.ro .acts,.ro #setBtn{display:none}
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(10,8,14,.55);display:none;align-items:flex-end;justify-content:center}
+.sheet.open{display:flex}
+.panel{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px max(4vw,16px) 24px}
+@media(min-width:700px){.sheet{align-items:center}.panel{border-radius:20px}}
+.panel h2{margin:0 0 12px;font-size:26px;font-stretch:85%;line-height:1.1}
+.fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fg .w{grid-column:1/-1}
+label{display:block;font-size:14px;font-weight:600}
+label input,label select,label textarea{display:block;width:100%;margin-top:4px;min-height:46px;border-radius:10px;border:1px solid var(--line);background:var(--panel);padding:8px 12px;font-size:16px;font-weight:400}
+textarea{resize:vertical;min-height:70px}
+.step{display:flex;gap:6px;margin-top:4px}.step input{margin:0;text-align:center}
+.step button{width:46px;flex:none;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:20px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chips button{min-height:38px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:var(--bg);font-weight:600}
+.chips button.on{background:var(--ink);color:var(--bg)}
+.hint{font-size:14px;color:var(--mute);margin:12px 0 0}.hint.over{color:var(--acc);font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.btn{min-height:48px;padding:0 20px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:700}
+.btn.pri{background:var(--acc);color:var(--accInk);border-color:var(--acc);flex:1}
+.btn.del{color:var(--acc);margin-left:auto}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--band);color:#fff;border-radius:12px;padding:10px 14px;display:none;gap:12px;align-items:center;z-index:20;max-width:92vw;font-size:15px}
+.toast.show{display:flex}
+.toast button{background:transparent;border:0;color:#e5c27a;font-weight:800;min-height:36px}
+.banner{background:var(--panel);border-left:4px solid var(--acc);padding:10px 12px;border-radius:8px;margin-top:14px;font-size:14px;display:none}
+@media(max-width:600px){.sum{grid-template-columns:minmax(0,1fr)}.turn{grid-template-columns:minmax(0,1fr);gap:6px}.tm{display:flex;align-items:baseline;gap:10px}.tm small{display:inline}.wd b{font-size:17px}.wd{min-height:64px;padding:6px 2px}}
+.tabs{display:flex;gap:4px;margin-top:18px;border-bottom:2px solid var(--ink)}
+.tabs button{min-height:46px;padding:0 18px;border:0;background:transparent;font-weight:700;border-radius:10px 10px 0 0;font-size:16px}
+.tabs button.on{background:var(--ink);color:var(--bg)}
+.alert{background:light-dark(#fdeceb,#3a1615);border-left:4px solid #d93a2b;border-radius:8px;padding:10px 12px;margin-top:14px;font-size:15px}
+.good{background:var(--panel);border-left:4px solid var(--ok);border-radius:8px;padding:10px 12px;margin-top:14px;font-size:15px}
+h2.sec{font-size:24px;line-height:1.1;margin:24px 0 4px;font-stretch:85%}
+.chg{list-style:none;padding:0;margin:6px 0 0}
+.chg li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.chg time{font-weight:800;font-stretch:75%;font-size:21px;line-height:1.1;white-space:nowrap}
+.chg .k{font-weight:800;color:var(--acc)}
+.tl{min-width:680px;padding-bottom:6px}
+.tlh{position:relative;height:22px;margin-left:66px;font-size:12px;color:var(--mute)}
+.tlh span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.tlf{font-size:13px;font-weight:700;color:var(--mute);margin:14px 0 2px}
+.tlr{display:grid;grid-template-columns:66px minmax(0,1fr);align-items:center;border-top:1px solid var(--line)}
+.tln{font-weight:700;font-size:14px}
+.tlt{position:relative;height:36px}
+.tlt i{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+.blk{position:absolute;top:4px;bottom:4px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:12px;padding:0 6px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:0;text-align:left;line-height:28px}
+.blk.man{background:var(--acc);color:#111}
+.blk.grp{box-shadow:inset 4px 0 0 #e5c27a}
+.blk.man.grp{box-shadow:inset 4px 0 0 #111}
+.tbl{font-weight:700;color:var(--ink)}.nt{color:#d93a2b;font-weight:700}
+.sug{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.sug button{min-height:36px;padding:0 12px;border-radius:18px;border:1px solid var(--acc);background:transparent;font-weight:700}
+.ted{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.7fr) 54px 54px auto;gap:6px;align-items:center;margin-top:6px}
+.ted input{min-height:40px;border-radius:8px;border:1px solid var(--line);background:var(--panel);padding:4px 8px;font-size:15px;width:100%}
+.ted .mv{display:flex;gap:3px}.ted .mv button{width:34px;min-height:40px;border-radius:8px;border:1px solid var(--line);background:var(--bg)}
+.ted.hd{font-size:12px;color:var(--mute);font-weight:600}
+.mini span{display:none}.mini{font-weight:400}.chk{display:flex;align-items:center;gap:6px}.chk input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--acc)}
+@media(max-width:600px){.ted{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;padding:8px 0;border-bottom:1px solid var(--line)}.ted>input[data-k=fila]{grid-column:span 2}.ted.hd{display:none}.mini{display:flex;align-items:center;gap:6px;font-size:13px}.mini span{display:inline;color:var(--mute);white-space:nowrap;flex:none}}
+.logo{height:46px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--mute);margin-top:8px}.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--ink)}.legend .m::before{background:var(--acc)}
+.quick{background:var(--panel);border-radius:16px;padding:14px;margin-top:16px}
+.quick h2{margin:0 0 8px;font-size:18px}
+.qrow{display:flex;gap:8px;flex-wrap:wrap}
+.qrow input[type=text]{flex:1 1 240px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font-size:16px}
+.qrow .btn{min-height:50px}
+.shot{display:inline-flex;align-items:center;cursor:pointer}
+.qmsg{font-size:14px;color:var(--mute);margin:8px 0 0}
+.qk{background:var(--bg);border-left-color:var(--acc)}
+.qk .warnl{color:#d93a2b;font-weight:700}
+.qhd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 8px}
+.qhd b{font-size:16px}
+.ro .quick{display:none}
+#login{position:fixed;inset:0;z-index:50;background:#0d0c0a;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px}
+#login form{width:100%;max-width:360px;display:grid;gap:12px}
+#login img{width:240px;max-width:80%;margin:0 auto 10px;display:block}
+#login input{min-height:52px;border-radius:12px;border:1px solid #3a3428;background:#1d1a15;color:#fff;padding:0 14px;font-size:17px}
+#login .btn{min-height:52px;font-size:17px}
+#lErr{color:#ff8a84;min-height:1.4em;margin:0;font-size:15px;text-align:center}
+#login.hide{display:none}
+@media(prefers-reduced-motion:reduce){.meter span{transition:none}}
+</style>
+</head>
+<body>
+<div id="login"><form id="lf" autocomplete="on">
+  <img src="logo.png" alt="Black-Out">
+  <input id="lUser" name="username" autocomplete="username" placeholder="Utente" autocapitalize="none" required>
+  <input id="lPass" name="password" type="password" autocomplete="current-password" placeholder="Password" required>
+  <button class="btn pri" id="lBtn">Entra</button>
+  <p id="lErr">Caricamento…</p>
+</form></div>
+<header class="top"><div class="wrap">
+  <img src="logo.png" alt="Black-Out" class="logo"><p class="brand">Prenotazioni sala</p>
+  <div class="sync" id="sync"><span class="dot"></span><span id="syncT">Connessione…</span></div>
+  <button class="ib" id="setBtn" aria-label="Impostazioni">Impostazioni</button><button class="ib" id="outBtn" aria-label="Esci">Esci</button>
+</div></header>
+
+<section class="day"><div class="wrap">
+  <div class="nav">
+    <button class="arw" id="prev" aria-label="Giorno precedente">‹</button>
+    <h1 id="dTitle">—</h1>
+    <button class="arw" id="next" aria-label="Giorno successivo">›</button>
+    <input type="date" class="pick" id="dPick" aria-label="Vai alla data">
+    <button class="ib" id="todayBtn" style="min-height:44px">Oggi</button>
+  </div>
+  <div class="week" id="week"></div>
+</div></section>
+
+<div class="wrap">
+  <div class="banner" id="banner"></div>
+  <section class="sum">
+    <div>
+      <div class="big"><span id="cv">0</span><small> / <span id="cap">72</span> coperti</small></div>
+      <div class="meter" id="meter"><span style="width:0"></span></div>
+    </div>
+    <div class="stats">
+      <div><b id="sN">0</b><span>prenotaz.</span></div>
+      <div><b id="sA">0</b><span>arrivati</span></div>
+      <div><b id="sF">0</b><span>posti liberi</span></div>
+    </div>
+  </section>
+  <div class="tabs" role="tablist"><button data-tab="list" class="on">Prenotazioni</button><button data-tab="sala">Sala e tavoli</button></div>
+  <div class="quick" id="quick">
+    <h2>Inserimento veloce</h2>
+    <form class="qrow" id="qf" autocomplete="off">
+      <input type="text" id="qText" placeholder="es. 4p 21:30 Nardone oggi" aria-label="Scrivi la prenotazione" enterkeyhint="send">
+      <button class="btn pri" type="submit" id="qGo" style="flex:none">Inserisci</button>
+      <label class="btn shot" id="shotBtn" hidden>Da screenshot<input type="file" id="qShot" accept="image/*" multiple hidden></label>
+    </form>
+    <p class="qmsg" id="qMsg">Anche più prenotazioni insieme, separate da “;” o una per riga. Il tavolo lo propone il gestionale.</p>
+    <div id="qOut"></div>
+  </div>
+  <input class="search" id="q" type="search" placeholder="Cerca per nome, telefono o nota…" autocomplete="off">
+  <main id="list"></main>
+  <section id="sala" hidden></section>
+</div>
+
+<button class="fab" id="addBtn">+ Nuova prenotazione</button>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="fTitle">
+  <form class="panel" id="form" novalidate>
+    <h2 id="fTitle">Nuova prenotazione</h2>
+    <div class="fg">
+      <label class="w">Nome<input id="fName" required autocomplete="off"></label>
+      <label>Telefono<input id="fPhone" type="tel" inputmode="tel" autocomplete="off"></label>
+      <label>Persone<span class="step"><button type="button" data-step="-1" aria-label="Meno">−</button><input id="fPeople" type="number" min="1" max="200" value="2" inputmode="numeric"><button type="button" data-step="1" aria-label="Più">+</button></span></label>
+      <label>Data<input id="fDate" type="date" required></label>
+      <label>Ora<input id="fTime" type="time" required step="300"></label>
+      <div class="w"><span class="lbl">Turni</span><div class="chips" id="fTurni"></div></div>
+      <div class="w"><span class="lbl">Tavolo — se non ne scegli nessuno lo assegna il gestionale</span><div class="chips" id="fTables"></div></div>
+      <label>Da dove<select id="fSource"></select></label>
+      <label>Stato<select id="fStatus"><option value="confermata">Confermata</option><option value="arrivata">Arrivata</option><option value="noshow">No-show</option><option value="cancellata">Cancellata</option></select></label>
+      <label class="w">Note<textarea id="fNotes" placeholder="Allergie, seggiolone, compleanno…"></textarea></label>
+    </div>
+    <p class="hint" id="fHint"></p>
+    <div class="row">
+      <button type="submit" class="btn pri" id="fSave">Salva</button>
+      <button type="button" class="btn" data-close>Annulla</button>
+      <button type="button" class="btn del" id="fDel" hidden>Elimina</button>
+    </div>
+  </form>
+</div>
+
+<div class="sheet" id="setSheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <form class="panel" id="setForm">
+    <h2 id="sTitle">Impostazioni sala</h2>
+    <div class="fg">
+      <label>Posti in sala<input id="sCap" type="number" min="1" inputmode="numeric"></label>
+      <label>Turni (separati da virgola)<input id="sTurni" placeholder="19:30, 20:30, 21:30"></label>
+      <label>Durata tavolo (min)<input id="sDur" type="number" min="30" step="5" inputmode="numeric"></label>
+      <label>Durata il sabato (min)<input id="sDurSab" type="number" min="30" step="5" inputmode="numeric"></label>
+      <label>Minuti per riapparecchiare<input id="sBuf" type="number" min="0" step="5" inputmode="numeric"></label>
+      <label>Capotavola se serve (stretti)<input id="sHeads" type="number" min="0" max="2" inputmode="numeric"></label>
+    </div>
+    <h2 class="sec">Tavoli</h2>
+    <p class="hint" style="margin-top:0"><b>Posti</b> = posti comodi del tavolo così com'è montato (es. T1 = 3 tavolini 60×60 = 6). I tavoli <b>unibili</b> della stessa <b>fila</b>, vicini nell'ordine dell'elenco, si uniscono sommando i posti. Il capotavola si usa solo se non c'è altro modo.</p>
+    <div class="ted hd"><span>Nome</span><span>Fila / zona</span><span>Posti</span><span>Unibile</span><span></span></div>
+    <div id="sTables"></div><datalist id="filaList"></datalist>
+    <button type="button" class="btn" id="sAdd" style="margin-top:10px">+ Aggiungi tavolo</button>
+    <p class="hint">Valgono per tutti i dispositivi collegati.</p>
+    <div class="row"><button type="submit" class="btn pri">Salva</button><button type="button" class="btn" data-close>Chiudi</button></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status"><span id="toastT"></span><button id="toastB" hidden>Annulla</button></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const GG=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+const MM=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const fmtLong=s=>{const d=parse(s);return GG[d.getDay()]+' '+d.getDate()+' '+MM[d.getMonth()]};
+const fmtShort=s=>{const d=parse(s);return GG[d.getDay()].slice(0,3)+' '+d.getDate()+' '+MM[d.getMonth()].slice(0,3)};
+const SRC=['Telefono','WhatsApp','TheFork','Instagram','Facebook','Di persona','Altro'];
+const ST={confermata:'',arrivata:'Arrivato',noshow:'No-show',cancellata:'Cancellata'};
+const today=iso(new Date());
+const winStart=addDays(today,-60);
+const F1='Sala sinistra · muro bianco',F2='Tavolone alto',F3='Sala destra · colonna',F4='Sala destra · muro dei quadri';
+const DEF_TABLES=[['T1',F1,6,1],['T2',F1,4,1],['T3',F1,4,1],['T4',F1,4,1],['T5',F1,4,1],['T5bis',F1,2,1],['Alto',F2,6,0],['T6',F3,2,1],['T7',F4,2,1],['T8',F4,2,1],['T9',F4,4,1],['T10',F4,2,1],['T11',F4,2,1],['T12',F4,2,1],['T13',F4,2,1]].map(([id,fila,solo,j])=>({id,fila,solo,join:!!j}));
+let sel=today,all=new Map(),old=new Map(),cfg={capacity:72,turni:['19:30','20:30','21:30'],dur:90,durSab:70,buffer:10,heads:1,tables:DEF_TABLES};
+let tab='list',fSel=new Set(),draft=[];
+const toMin=t=>{const[h,m]=String(t||'0:0').split(':').map(Number);let v=(h||0)*60+(m||0);if(h<6)v+=1440;return v};
+const hm=v=>{v=((v%1440)+1440)%1440;return pad(Math.floor(v/60))+':'+pad(v%60)};
+const durFor=d=>parse(d).getDay()===6?cfg.durSab:cfg.dur;
+const active=b=>b.status!=='cancellata'&&b.status!=='noshow';
+function files(){const fs=[];for(const t of cfg.tables){let f=fs.find(x=>x.n===t.fila);if(!f)fs.push(f={n:t.fila,l:[]});f.l.push(t)}return fs}
+function segs(){const out=[];for(const f of files()){const L=f.l;for(let i=0;i<L.length;i++)for(let j=i;j<L.length&&j<i+8;j++){const s=L.slice(i,j+1);if(s.length>1&&s.some(t=>!t.join))break;out.push({ids:s.map(t=>t.id),n:s.length,cap:s.reduce((a,t)=>a+(+t.solo||0),0),j:s.every(t=>t.join)})}}return out}
+function manualIds(b){const ids=new Set(cfg.tables.map(t=>t.id));const a=Array.isArray(b.tables)?b.tables:(b.table?String(b.table).split(/[+,\s]+/):[]);return a.map(String).filter(x=>ids.has(x))}
+function plan(date,extra){
+  const dur=durFor(date),buf=+cfg.buffer||0,S=segs();
+  const ex=extra?[].concat(extra):[],exIds=new Set(ex.map(x=>x.id));const list=forDate(date).filter(b=>active(b)&&!exIds.has(b.id)).concat(ex);
+  const run=order=>{
+    const occ=new Map(),as=new Map(),un=[],conf=[];
+    const iv=b=>{const s=toMin(b.time);return[s,s+dur]};
+    const free=(ids,s,e)=>ids.every(t=>(occ.get(t)||[]).every(o=>e+buf<=o.s||s>=o.e+buf));
+    const put=(b,ids,man,tight)=>{const[s,e]=iv(b);for(const t of ids){if(!occ.has(t))occ.set(t,[]);occ.get(t).push({s,e,b,ids})}as.set(b.id,{ids,man,s,e,b,tight})};
+    for(const b of list){const m=manualIds(b);if(m.length){const[s,e]=iv(b);if(!free(m,s,e))conf.push(b);put(b,m,true)}}
+    for(const b of order){const[s,e]=iv(b),p=+b.people||1;const c=S.filter(x=>x.cap>=p&&free(x.ids,s,e)).sort((a,z)=>a.cap-z.cap||a.n-z.n)[0];if(c){put(b,c.ids,false,false);continue}const hd=+cfg.heads||0;const c2=hd?S.filter(x=>x.j&&x.cap+hd>=p&&free(x.ids,s,e)).sort((a,z)=>a.cap-z.cap||a.n-z.n)[0]:null;if(c2)put(b,c2.ids,false,true);else un.push(b)}
+    return{as,un,conf,occ,dur}};
+  const auto=list.filter(b=>!manualIds(b).length);
+  const A=run([...auto].sort((a,b)=>(+b.people)-(+a.people)||toMin(a.time)-toMin(b.time)));
+  const B=run([...auto].sort((a,b)=>toMin(a.time)-toMin(b.time)||(+b.people)-(+a.people)));
+  const lost=r=>r.un.reduce((s,b)=>s+(+b.people||0),0);
+  return lost(B)<lost(A)?B:A;
+}
+function changes(P){
+  const ev=[],arr=[...P.as.values()],key=ids=>ids.join('+');
+  for(const a of arr){
+    const nm=esc(a.b.name),p=a.b.people;
+    if(a.ids.length>1)ev.push({t:a.s,txt:`Unisci <span class="k">${esc(key(a.ids))}</span> per ${nm} (${p}p, arrivo ${hm(a.s)})${a.tight?' — aggiungi il capotavola':''}`});
+    else if(a.tight)ev.push({t:a.s,txt:`Aggiungi capotavola a <span class="k">${esc(key(a.ids))}</span> per ${nm} (${p}p, stretti)`});
+    const nx=new Set();for(const t of a.ids){const n=arr.filter(x=>x!==a&&x.s>=a.s&&x.ids.includes(t)).sort((x,y)=>x.s-y.s)[0];if(n)nx.add(n)}
+    if(!nx.size)continue;const L=[...nx].sort((x,y)=>x.s-y.s);
+    if(L.every(x=>key(x.ids)===key(a.ids)))ev.push({t:a.e,txt:`Riapparecchia <span class="k">${esc(key(a.ids))}</span>: esce ${nm}, alle ${hm(L[0].s)} arriva ${esc(L[0].b.name)} (${L[0].b.people}p)`});
+    else if(a.ids.length>1)ev.push({t:a.e,txt:`Separa <span class="k">${esc(key(a.ids))}</span> dopo ${nm} → `+L.map(x=>`${esc(key(x.ids))} per ${esc(x.b.name)} alle ${hm(x.s)}`).join('; ')});
+  }
+  return ev.sort((a,b)=>a.t-b.t);
+}
+let db=null,q='',editing=null,delArmed=false,ready=false;
+
+const setSync=(cls,t)=>{$('#sync').className='sync '+cls;$('#syncT').textContent=t};
+const banner=t=>{const b=$('#banner');b.textContent=t||'';b.style.display=t?'block':'none'};
+let tt;
+function toast(t,undo){$('#toastT').textContent=t;const b=$('#toastB');b.hidden=!undo;b.onclick=()=>{hideToast();undo&&undo()};$('#toast').classList.add('show');clearTimeout(tt);tt=setTimeout(hideToast,undo?7000:3000)}
+function hideToast(){$('#toast').classList.remove('show')}
+
+function forDate(date){
+  const src=date<winStart?old:all;const out=[];
+  for(const[id,b]of src)if(b.date===date)out.push({id,...b});
+  return out.sort((a,b)=>(a.time||'').localeCompare(b.time||'')||String(a.name).localeCompare(String(b.name)));
+}
+const covers=l=>l.filter(b=>b.status!=='cancellata'&&b.status!=='noshow').reduce((s,b)=>s+(+b.people||0),0);
+function waLink(b){
+  let d=String(b.phone||'').replace(/\D/g,'');
+  if(d.startsWith('00'))d=d.slice(2);else if(d.length<=10&&d.startsWith('3'))d='39'+d;
+  const msg=`Ciao ${b.name}, ti confermiamo la prenotazione al Blackout Pub per ${b.people} ${+b.people===1?'persona':'persone'} ${fmtLong(b.date).toLowerCase()} alle ${b.time}. A presto!`;
+  return 'https://wa.me/'+d+'?text='+encodeURIComponent(msg);
+}
+function card(b,showDate,P){
+  const st=b.status||'confermata';
+  const a=P&&P.as.get(b.id);
+  const tl=!active(b)?'':a?`<span class="tbl">${esc(a.ids.join('+'))}</span>${a.man?'':' (auto)'}${a.tight?' · stretti, con capotavola':''}`:P?'<span class="nt">Senza tavolo</span>':'';
+  return `<article class="bk st-${esc(st)}" data-id="${esc(b.id)}">
+  <div class="pp"><b>${esc(b.people)}</b><small>pers.</small></div>
+  <div class="info"><h3>${esc(b.name)}${ST[st]?`<span class="tag">${ST[st]}</span>`:''}</h3>
+  <p class="meta">${showDate?esc(fmtShort(b.date)+' · '+b.time)+' · ':''}${tl?'Tavolo '+tl+' · ':''}${esc(b.source||'')}</p>
+  ${b.notes?`<p class="note">${esc(b.notes)}</p>`:''}
+  ${b.phone?`<p class="ph"><a href="tel:${esc(String(b.phone).replace(/[^\d+]/g,''))}">${esc(b.phone)}</a> · <a href="${esc(waLink(b))}" target="_blank" rel="noopener">WhatsApp</a></p>`:''}</div>
+  <div class="acts"><button data-act="arr" class="${st==='arrivata'?'on':''}">Arrivato</button><button data-act="ns" class="${st==='noshow'?'on':''}">No-show</button><button data-act="edit">Modifica</button></div>
+  </article>`;
+}
+function render(){
+  $('#dTitle').innerHTML=esc(fmtLong(sel))+(sel===today?'<small>oggi</small>':'');
+  $('#dPick').value=sel;
+  const d=parse(sel),mon=addDays(sel,-((d.getDay()+6)%7));
+  $('#week').innerHTML=Array.from({length:7},(_,i)=>{
+    const day=addDays(mon,i),c=covers(forDate(day)),pc=Math.min(100,c/cfg.capacity*100);
+    return `<button class="wd${day===sel?' on':''}${day===today?' td':''}" data-d="${day}" aria-label="${esc(fmtLong(day))}, ${c} coperti"><i>${GG[parse(day).getDay()].slice(0,3)}</i><b>${parse(day).getDate()}</b><div class="bar"><span style="width:${pc}%"></span></div><i>${c||'–'}</i></button>`;
+  }).join('');
+  const list=forDate(sel),cv=covers(list);
+  $('#cv').textContent=cv;$('#cap').textContent=cfg.capacity;
+  $('#meter').className='meter'+(cv>cfg.capacity?' over':'');
+  $('#meter span').style.width=Math.min(100,cv/cfg.capacity*100)+'%';
+  $('#sN').textContent=list.filter(b=>b.status!=='cancellata').length;
+  $('#sA').textContent=list.filter(b=>b.status==='arrivata').reduce((s,b)=>s+(+b.people||0),0);
+  $('#sF').textContent=Math.max(0,cfg.capacity-cv);
+  document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
+  $('#q').hidden=$('#list').hidden=$('#quick').hidden=tab!=='list';$('#sala').hidden=tab!=='sala';
+  const L=$('#list');
+  if(!ready){L.innerHTML='<p class="empty">Caricamento prenotazioni…</p>';return}
+  if(q){
+    const k=q.toLowerCase(),res=[];
+    for(const m of[all,old])for(const[id,b]of m)if([b.name,b.phone,b.notes,b.table].some(v=>String(v||'').toLowerCase().includes(k)))res.push({id,...b});
+    res.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+    const pc=new Map(),pf=d=>{if(!pc.has(d))pc.set(d,plan(d));return pc.get(d)};
+    L.innerHTML=res.length?`<p class="lbl">${res.length} risultati (ultimi 60 giorni e futuri)</p>`+res.map(b=>card(b,true,pf(b.date))).join(''):'<p class="empty">Nessuna prenotazione trovata.</p>';
+    return;
+  }
+  const P=plan(sel);renderSala(P,list);
+  if(!list.length){L.innerHTML='<p class="empty">Nessuna prenotazione per questo giorno.<br>Tocca “+ Nuova prenotazione” per aggiungerne una.</p>';return}
+  const groups=new Map();for(const b of list){if(!groups.has(b.time))groups.set(b.time,[]);groups.get(b.time).push(b)}
+  L.innerHTML=[...groups].map(([t,g])=>`<section class="turn"><div class="tm">${esc(t||'—')}<small>${covers(g)} coperti</small></div><div>${g.map(b=>card(b,false,P)).join('')}</div></section>`).join('');
+}
+function renderSala(P,list){
+  const S=$('#sala');
+  if(!list.filter(active).length){S.innerHTML='<p class="empty">Nessuna prenotazione attiva per questo giorno.</p>';return}
+  let h='';
+  if(P.un.length)h+=`<div class="alert"><b>Overbooking:</b> nessun tavolo libero per ${P.un.map(b=>`${esc(b.name)} (${b.people}p, ${esc(b.time)})`).join(', ')}. Sposta l'orario o assegna i tavoli a mano.</div>`;
+  if(P.conf.length)h+=`<div class="alert"><b>Tavoli sovrapposti:</b> ${P.conf.map(b=>`${esc(b.name)} (${esc(manualIds(b).join('+'))}, ${esc(b.time)})`).join(', ')} — il tavolo scelto a mano è già occupato in quell'orario.</div>`;
+  if(!P.un.length&&!P.conf.length)h+=`<div class="good">Tutte le prenotazioni hanno un tavolo. Ogni tavolo resta occupato ${P.dur} minuti, più ${+cfg.buffer||0} minuti per riapparecchiare.</div>`;
+  const ev=changes(P);
+  h+=`<h2 class="sec">Cambi tavoli della serata</h2>`+(ev.length?`<ul class="chg">${ev.map(e=>`<li><time>${hm(e.t)}</time><span>${e.txt}</span></li>`).join('')}</ul>`:'<p class="lbl">Nessun tavolo da unire, separare o riapparecchiare.</p>');
+  const vals=[...P.as.values()];
+  const lo=Math.floor(Math.min(1140,...vals.map(a=>a.s))/30)*30,hi=Math.ceil(Math.max(1410,...vals.map(a=>a.e))/30)*30,span=hi-lo;
+  const X=v=>((v-lo)/span*100).toFixed(2)+'%';
+  const ticks=[];for(let v=lo;v<=hi;v+=30)ticks.push(v);
+  h+=`<h2 class="sec">Occupazione tavoli</h2><div class="legend"><span>Assegnato in automatico</span><span class="m">Scelto a mano</span></div><div class="scroll"><div class="tl"><div class="tlh">${ticks.map(v=>`<span style="left:${X(v)}">${hm(v)}</span>`).join('')}</div>`;
+  for(const f of files()){
+    h+=`<div class="tlf">${esc(f.n||'Senza fila')}</div>`;
+    for(const t of f.l){
+      const o=P.occ.get(t.id)||[];
+      h+=`<div class="tlr"><span class="tln">${esc(t.id)}</span><div class="tlt">${ticks.map(v=>`<i style="left:${X(v)}"></i>`).join('')}${o.map(x=>{const a=P.as.get(x.b.id);return `<button class="blk${a.man?' man':''}${x.ids.length>1?' grp':''}" data-id="${esc(x.b.id)}" style="left:${X(x.s)};width:calc(${X(x.e)} - ${X(x.s)})" title="${esc(x.b.name)} ${x.b.people}p ${esc(x.ids.join('+'))}">${esc(x.b.name)} · ${x.b.people}p${x.ids.length>1?' · '+esc(x.ids.join('+')):''}</button>`}).join('')}</div></div>`;
+    }
+  }
+  S.innerHTML=h+'</div></div>';
+}
+$('#sala').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b&&!document.body.classList.contains('ro'))openForm(b.dataset.id)});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;render()}));
+function go(d){if(!d)return;sel=d;q='';$('#q').value='';if(sel<winStart)loadOld(sel);render()}
+async function loadOld(d){
+  if(!db)return;
+  try{const s=await db.collection('bookings').where('date','==',d).get();for(const[id,b]of[...old])if(b.date===d)old.delete(id);s.docs.forEach(x=>old.set(x.id,x.data()));render()}catch(e){toast('Impossibile caricare quel giorno')}
+}
+const getB=id=>all.get(id)||old.get(id);
+function errMsg(e){return e&&e.code==='invalid_argument'?'Non hai i permessi per modificare':e&&e.code==='quota_exceeded'?'Spazio esaurito: elimina prenotazioni vecchie':'Errore di salvataggio, riprova'}
+
+/* ---- form ---- */
+$('#fSource').innerHTML=SRC.map(s=>`<option>${s}</option>`).join('');
+function chips(){const t=$('#fTime').value;$('#fTurni').innerHTML=cfg.turni.map(x=>`<button type="button" data-t="${esc(x)}" class="${x===t?'on':''}">${esc(x)}</button>`).join('')}
+function tchips(){$('#fTables').innerHTML=cfg.tables.map(t=>`<button type="button" data-tb="${esc(t.id)}" class="${fSel.has(t.id)?'on':''}">${esc(t.id)}</button>`).join('')}
+function hint(){
+  const d=$('#fDate').value,h=$('#fHint');if(!d){h.textContent='';return}
+  const st=$('#fStatus').value,p=+$('#fPeople').value||1,time=$('#fTime').value;
+  const others=forDate(d).filter(b=>b.id!==editing);
+  const tot=covers(others)+(['cancellata','noshow'].includes(st)?0:p);
+  let html=`Con questa: ${tot} / ${cfg.capacity} coperti in giornata`+(tot>cfg.capacity?' — oltre la capienza':'');
+  let bad=tot>cfg.capacity;
+  if(time&&!['cancellata','noshow'].includes(st)){
+    const ex={id:editing||'__new',name:$('#fName').value.trim()||'Nuova',people:p,time,date:d,status:st,tables:[...fSel]};
+    const P=plan(d,ex),a=P.as.get(ex.id);
+    if(a&&!P.conf.includes(ex))html+=`<br>Tavolo ${a.man?'scelto':'proposto'}: <b>${esc(a.ids.join('+'))}</b>${a.tight?' — stretti, con capotavola':''}`;
+    else{
+      bad=true;html+=a?`<br>Il tavolo ${esc(a.ids.join('+'))} è già occupato alle ${esc(time)}.`:`<br>Nessun tavolo libero alle ${esc(time)} per ${p} persone.`;
+      const c=new Set(cfg.turni);for(let v=1140;v<=1350;v+=15)c.add(hm(v));
+      const ok=[...c].sort((x,y)=>toMin(x)-toMin(y)).filter(t=>t!==time&&plan(d,{...ex,time:t,tables:[]}).as.has(ex.id)).slice(0,8);
+      html+=ok.length?`<span class="sug">${ok.map(t=>`<button type="button" data-sug="${t}">${t}</button>`).join('')}</span>`:'<br>Nessun orario libero in serata.';
+    }
+  }
+  h.innerHTML=html;h.className='hint'+(bad?' over':'');
+}
+$('#fHint').addEventListener('click',e=>{const b=e.target.closest('[data-sug]');if(b){$('#fTime').value=b.dataset.sug;fSel.clear();tchips();chips();hint()}});
+$('#fTables').addEventListener('click',e=>{const b=e.target.closest('[data-tb]');if(!b)return;const id=b.dataset.tb;fSel.has(id)?fSel.delete(id):fSel.add(id);tchips();hint()});
+function openForm(id,pre){
+  editing=id||null;delArmed=false;if(!pre)qEdit=null;
+  const b=id?getB(id):{name:'',phone:'',people:2,date:sel,time:cfg.turni[0]||'20:00',table:'',source:'Telefono',status:'confermata',notes:'',...(pre||{})};
+  $('#fTitle').textContent=id?'Modifica prenotazione':'Nuova prenotazione';
+  $('#fName').value=b.name||'';$('#fPhone').value=b.phone||'';$('#fPeople').value=b.people||2;$('#fDate').value=b.date||sel;$('#fTime').value=b.time||'';
+  fSel=new Set(id?manualIds(b):[]);tchips();$('#fSource').value=SRC.includes(b.source)?b.source:'Altro';$('#fStatus').value=b.status||'confermata';$('#fNotes').value=b.notes||'';
+  $('#fDel').hidden=!id;$('#fDel').textContent='Elimina';
+  chips();hint();$('#sheet').classList.add('open');setTimeout(()=>$('#fName').focus(),50);
+}
+const closeAll=()=>document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeAll));
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)closeAll()}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+$('#fTurni').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t){$('#fTime').value=t.dataset.t;chips();hint()}});
+$('#fTime').addEventListener('input',()=>{chips();hint()});
+document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{const i=$('#fPeople');i.value=Math.max(1,(+i.value||0)+ +b.dataset.step);hint()}));
+['#fPeople','#fDate','#fStatus'].forEach(s=>$(s).addEventListener('input',hint));
+$('#form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const name=$('#fName').value.trim(),date=$('#fDate').value,time=$('#fTime').value;
+  if(!name){$('#fName').focus();return toast('Inserisci il nome')}
+  if(!date||!time)return toast('Inserisci data e ora');
+  if(!db)return toast('Sincronizzazione non disponibile');
+  const now=new Date().toISOString();
+  const data={name,phone:$('#fPhone').value.trim(),people:Math.max(1,+$('#fPeople').value||1),date,time,tables:[...fSel],source:$('#fSource').value,status:$('#fStatus').value,notes:$('#fNotes').value.trim(),updatedAt:now};
+  const btn=$('#fSave');btn.disabled=true;
+  try{
+    if(editing){data.createdAt=getB(editing)?.createdAt||now;await db.doc('bookings/'+editing).set(data)}
+    else{data.createdAt=now;await db.collection('bookings').add(data)}
+    if(!editing&&qEdit){pending=pending.filter(x=>x!==qEdit);qEdit=null;renderQ()}
+    closeAll();toast('Prenotazione salvata');go(date);if(date<winStart)loadOld(date);
+  }catch(err){toast(errMsg(err))}finally{btn.disabled=false}
+});
+$('#fDel').addEventListener('click',async()=>{
+  if(!delArmed){delArmed=true;$('#fDel').textContent='Conferma eliminazione';return}
+  const id=editing,copy={...getB(id)};
+  try{await db.doc('bookings/'+id).delete();old.delete(id);closeAll();render();
+    toast('Prenotazione eliminata',async()=>{try{await db.doc('bookings/'+id).set(copy);if(copy.date<winStart)loadOld(copy.date)}catch(e){toast(errMsg(e))}});
+  }catch(e){toast(errMsg(e))}
+});
+
+/* ---- list actions ---- */
+$('#list').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const id=b.closest('[data-id]').dataset.id,cur=getB(id);if(!cur)return;
+  if(b.dataset.act==='edit')return openForm(id);
+  const target=b.dataset.act==='arr'?'arrivata':'noshow';
+  const status=cur.status===target?'confermata':target;
+  b.disabled=true;
+  const upd={status,updatedAt:new Date().toISOString()};
+  if(status==='arrivata'&&!manualIds(cur).length){const a=plan(cur.date).as.get(id);if(a)upd.tables=a.ids}
+  try{await db.doc('bookings/'+id).update(upd);if(cur.date<winStart)loadOld(cur.date)}catch(err){toast(errMsg(err))}finally{b.disabled=false}
+});
+
+/* ---- nav ---- */
+$('#prev').addEventListener('click',()=>go(addDays(sel,-1)));
+$('#next').addEventListener('click',()=>go(addDays(sel,1)));
+$('#todayBtn').addEventListener('click',()=>go(today));
+$('#dPick').addEventListener('change',e=>go(e.target.value));
+$('#week').addEventListener('click',e=>{const w=e.target.closest('[data-d]');if(w)go(w.dataset.d)});
+$('#q').addEventListener('input',e=>{q=e.target.value.trim();render()});
+$('#addBtn').addEventListener('click',()=>openForm());
+
+/* ---- settings ---- */
+function ted(){
+  $('#filaList').innerHTML=[...new Set(draft.map(t=>t.fila))].map(f=>`<option value="${esc(f)}">`).join('');
+  $('#sTables').innerHTML=draft.map((t,i)=>`<div class="ted" data-i="${i}"><input data-k="id" value="${esc(t.id)}" aria-label="Nome"><input data-k="fila" list="filaList" value="${esc(t.fila)}" aria-label="Fila"><label class="mini"><span>Posti</span><input data-k="solo" type="number" min="1" value="${esc(t.solo)}"></label><label class="mini chk"><input data-k="join" type="checkbox" ${t.join?'checked':''}><span>Unibile</span></label><span class="mv"><button type="button" data-mv="-1" aria-label="Su">↑</button><button type="button" data-mv="1" aria-label="Giù">↓</button><button type="button" data-rm aria-label="Elimina">✕</button></span></div>`).join('');
+}
+$('#sTables').addEventListener('input',e=>{const r=e.target.closest('[data-i]'),k=e.target.dataset.k;if(r&&k)draft[+r.dataset.i][k]=k==='join'?e.target.checked:k==='solo'?+e.target.value:e.target.value});
+$('#sTables').addEventListener('click',e=>{const r=e.target.closest('[data-i]');if(!r)return;const i=+r.dataset.i;
+  if(e.target.closest('[data-rm]')){draft.splice(i,1);ted()}
+  const m=e.target.closest('[data-mv]');if(m){const j=i+ +m.dataset.mv;if(j>=0&&j<draft.length){[draft[i],draft[j]]=[draft[j],draft[i]];ted()}}});
+$('#sAdd').addEventListener('click',()=>{const l=draft[draft.length-1];draft.push({id:'T'+(draft.length+1),fila:l?l.fila:'Sala',solo:2,join:true});ted()});
+$('#setBtn').addEventListener('click',()=>{$('#sCap').value=cfg.capacity;$('#sTurni').value=cfg.turni.join(', ');$('#sDur').value=cfg.dur;$('#sDurSab').value=cfg.durSab;$('#sBuf').value=cfg.buffer;$('#sHeads').value=cfg.heads;draft=cfg.tables.map(t=>({...t}));ted();$('#setSheet').classList.add('open')});
+$('#setForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!db)return toast('Sincronizzazione non disponibile');
+  const capacity=Math.max(1,+$('#sCap').value||72);
+  const turni=$('#sTurni').value.split(/[,;\s]+/).map(s=>s.replace('.',':')).filter(s=>/^\d{1,2}:\d{2}$/.test(s)).map(s=>s.padStart(5,'0')).sort();
+  const tables=draft.map(t=>({id:String(t.id).trim(),fila:String(t.fila||'').trim(),solo:Math.max(1,+t.solo||1),join:!!t.join})).filter(t=>t.id);
+  if(new Set(tables.map(t=>t.id)).size!==tables.length)return toast('Ci sono due tavoli con lo stesso nome');
+  if(!tables.length)return toast('Aggiungi almeno un tavolo');
+  try{await db.doc('config/settings').set({capacity,turni:turni.length?turni:cfg.turni,dur:Math.max(30,+$('#sDur').value||90),durSab:Math.max(30,+$("#sDurSab").value||70),buffer:Math.max(0,+$('#sBuf').value||0),heads:Math.max(0,+$('#sHeads').value||0),tables});closeAll();toast('Impostazioni salvate')}catch(err){toast(errMsg(err))}
+});
+
+/* ---- inserimento veloce ---- */
+let pending=[],qEdit=null,sampleFn=null;
+const WD=['domenica','lunedi','martedi','mercoledi','giovedi','venerdi','sabato'];
+const norm=x=>x.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function localParse(line){
+  let s=' '+line.trim()+' ';
+  const pm=s.match(/(\d{1,3})\s*(?:p|px|pax|pers|persone|persona|coperti)(?=[\s.,;]|$)/i);if(!pm)return null;
+  s=s.replace(pm[0],' ');
+  const tm=s.match(/(?:alle\s*|ore\s*)?\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/i)||s.match(/\b(?:alle|ore)\s+([01]?\d|2[0-3])\b/i);if(!tm)return null;
+  s=s.replace(tm[0],' ');const time=pad(+tm[1])+':'+(tm[2]||'00');
+  let date=sel;const n=norm(s);
+  const dm=s.match(/\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?\b/);
+  if(dm){let y=dm[3]?+dm[3]:parse(today).getFullYear();if(y<100)y+=2000;let d=iso(new Date(y,+dm[2]-1,+dm[1]));if(!dm[3]&&d<today)d=iso(new Date(y+1,+dm[2]-1,+dm[1]));date=d;s=s.replace(dm[0],' ')}
+  else if(/\bdopodomani\b/.test(n))date=addDays(today,2);
+  else if(/\bdomani\b/.test(n))date=addDays(today,1);
+  else if(/\b(oggi|stasera)\b/.test(n))date=today;
+  else{const w=WD.findIndex(x=>new RegExp('\\b'+x+'\\b').test(n));if(w>=0)date=addDays(today,(w-parse(today).getDay()+7)%7)}
+  let phone='';const ph=s.match(/\+?\d[\d ]{7,}\d/);if(ph){phone=ph[0].trim();s=s.replace(ph[0],' ')}
+  const stop=new Set(['oggi','stasera','domani','dopodomani','alle','ore','per','tel','cell','il','di','a','sig','sig.','signor','signora','x',...WD]);
+  const words=s.split(/[\s,;]+/).filter(w=>w&&!stop.has(norm(w).replace(/\.$/,'')));
+  if(!words.length)return null;
+  const name=words.map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+  return{name,people:+pm[1],date,time,phone,notes:'',source:'Telefono'};
+}
+function clean(x){
+  const o={name:String(x?.name||'').trim(),people:Math.max(1,Math.round(+x?.people||0))||0,date:/^\d{4}-\d{2}-\d{2}$/.test(x?.date)?x.date:sel,time:'',phone:String(x?.phone||'').trim(),notes:String(x?.notes||'').trim(),source:SRC.includes(x?.source)?x.source:'Telefono'};
+  const t=String(x?.time||'').match(/^(\d{1,2})[:.](\d{2})$/);if(t)o.time=pad(+t[1])+':'+t[2];
+  return o;
+}
+const aiPrompt=what=>`Sei l'assistente prenotazioni del Blackout Pub (Casamassima). Oggi è ${GG[parse(today).getDay()]} ${today}. ${what}
+Rispondi SOLO con un array JSON, un oggetto per prenotazione:
+[{"name":"Rossi Mario","people":4,"date":"YYYY-MM-DD","time":"HH:MM","phone":"","notes":"","source":"Telefono"}]
+Regole: date relative (oggi, domani, sabato…) calcolate rispetto a oggi; se manca la data usa ${sel}; se manca l'ora metti ""; nome come scritto, con le iniziali maiuscole; nelle note metti richieste utili (allergie, seggiolone, compleanno, sedia in più, sconto); source deve essere uno tra ${SRC.join(', ')} (TheFork se lo screenshot è dell'app TheFork, WhatsApp se è una chat WhatsApp). Ignora le prenotazioni annullate. Se non trovi prenotazioni rispondi [].`;
+const qMsg=(t,bad)=>{const m=$('#qMsg');m.textContent=t;m.style.color=bad?'#d93a2b':''};
+function sErr(e){return{not_granted:'Permesso a Claude non concesso.',rate_limited:'Troppe richieste, riprova tra poco.',image_rejected:'Immagine non valida, prova un altro screenshot.',invalid_json:'Non sono riuscito a leggere le prenotazioni, riprova.',session_expired:'Accedi di nuovo a Claude.'}[e?.code]||'Lettura non riuscita, riprova.'}
+async function aiRead(prompt,opts){
+  if(!sampleFn){qMsg('Non ho capito: "'+prompt.split('\n').slice(-1)[0].slice(0,60)+'". Scrivi tipo: 4p 21:30 Nardone oggi',true);return[]}
+  $('#qGo').disabled=true;qMsg('Sto leggendo…');
+  try{const r=await sampleFn.json(prompt,opts);const arr=(Array.isArray(r)?r:[]).map(clean).filter(x=>x.name||x.people);qMsg(arr.length?`Trovate ${arr.length} prenotazioni: controlla e salva.`:'Non ho trovato prenotazioni.',!arr.length);return arr}
+  catch(e){qMsg(sErr(e),true);return[]}finally{$('#qGo').disabled=false}
+}
+$('#qf').addEventListener('submit',async e=>{
+  e.preventDefault();const txt=$('#qText').value.trim();if(!txt)return;
+  const lines=txt.split(/\n|;/).map(x=>x.trim()).filter(Boolean),ok=[],ko=[];
+  for(const l of lines){const p=localParse(l);p?ok.push(p):ko.push(l)}
+  pending.push(...ok);if(ok.length)qMsg(`${ok.length===1?'Prenotazione pronta':ok.length+' prenotazioni pronte'}: controlla e salva.`);
+  renderQ();$('#qText').value='';
+  if(ko.length){const r=await aiRead(aiPrompt('Estrai le prenotazioni da questo testo scritto dal personale:\n\n'+ko.join('\n')),{modelTier:'quick',cache:false});pending.push(...r);renderQ()}
+});
+$('#qShot').addEventListener('change',async e=>{
+  const f=[...e.target.files];e.target.value='';if(!f.length)return;
+  const r=await aiRead(aiPrompt(`Estrai tutte le prenotazioni visibili ${f.length>1?'in questi screenshot':'in questo screenshot'} (TheFork Manager, WhatsApp, agenda o altro).`),{images:f,cache:false});
+  pending.push(...r);renderQ();
+});
+function renderQ(){
+  const O=$('#qOut');if(!pending.length){O.innerHTML='';return}
+  const P=new Map();
+  pending.forEach((x,i)=>x._id='__q'+i);
+  for(const d of new Set(pending.map(x=>x.date)))P.set(d,plan(d,pending.filter(x=>x.date===d&&x.time&&x.people&&x.name).map(x=>({...x,id:x._id,status:'confermata',tables:[]}))));
+  O.innerHTML=`<div class="qhd"><b>Da confermare (${pending.length})</b>${pending.length>1?'<button class="btn pri" data-q="all" style="flex:none">Salva tutte</button>':''}</div>`+pending.map((x,i)=>{
+    const miss=!x.name?'Manca il nome':!x.people?'Mancano le persone':!x.time?"Manca l'ora":'';
+    const a=!miss&&P.get(x.date).as.get(x._id);
+    const dup=forDate(x.date).some(b=>active(b)&&norm(String(b.name)).includes(norm(x.name).split(' ')[0]));
+    const tl=miss?`<span class="warnl">${miss}</span>`:a?`Tavolo proposto <span class="tbl">${esc(a.ids.join('+'))}</span>${a.tight?' · stretti, con capotavola':''}`:'<span class="warnl">Nessun tavolo libero: overbooking</span>';
+    return `<article class="bk qk" data-qi="${i}"><div class="pp"><b>${esc(x.people||'?')}</b><small>pers.</small></div><div class="info"><h3>${esc(x.name||'Senza nome')}</h3><p class="meta">${esc(fmtLong(x.date))} · ${esc(x.time||'--:--')} · ${esc(x.source)}${x.phone?' · '+esc(x.phone):''}</p><p class="meta">${tl}</p>${x.notes?`<p class="note">${esc(x.notes)}</p>`:''}${dup?'<p class="meta warnl">Attenzione: c\'è già una prenotazione con questo nome quel giorno</p>':''}</div><div class="acts">${miss?'':`<button data-q="save">${a?'Salva':'Salva comunque'}</button>`}<button data-q="edit">Modifica</button><button data-q="del">Scarta</button></div></article>`}).join('');
+}
+async function saveQ(x){
+  const now=new Date().toISOString();
+  await db.collection('bookings').add({name:x.name,phone:x.phone,people:x.people,date:x.date,time:x.time,tables:[],source:x.source,status:'confermata',notes:x.notes,createdAt:now,updatedAt:now});
+}
+$('#qOut').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-q]');if(!b)return;
+  if(!db)return toast('Sincronizzazione non disponibile');
+  if(b.dataset.q==='all'){
+    b.disabled=true;let n=0;
+    for(const x of [...pending]){if(!x.name||!x.people||!x.time)continue;try{await saveQ(x);pending=pending.filter(y=>y!==x);n++}catch(err){toast(errMsg(err));break}}
+    renderQ();toast(n+' prenotazioni salvate');return;
+  }
+  const x=pending[+b.closest('[data-qi]').dataset.qi];if(!x)return;
+  if(b.dataset.q==='del'){pending=pending.filter(y=>y!==x);renderQ();return}
+  if(b.dataset.q==='edit'){openForm(null,{...x,time:x.time||cfg.turni[0]||'20:00',people:x.people||2});qEdit=x;return}
+  b.disabled=true;
+  try{await saveQ(x);pending=pending.filter(y=>y!==x);renderQ();toast('Prenotazione salvata');go(x.date)}catch(err){toast(errMsg(err));b.disabled=false}
+});
+
+render();
+
+/* ---- sync ---- */
+(async()=>{
+  if(typeof claude==='undefined'||!claude.use){setSync('off','Offline');banner('Sincronizzazione non disponibile.');ready=true;render();return}
+  db=await claude.use('db');
+  if(!db){setSync('off','Non collegato');banner('Sincronizzazione non disponibile in questa vista: accedi con un account che ha accesso alla pagina.');ready=true;render();return}
+  const timer=setTimeout(()=>{setSync('warn','Connessione lenta');banner('Non riesco a raggiungere il server: i dati potrebbero non essere aggiornati.')},10000);
+  db.collection('bookings').where('date','>=',winStart).orderBy('date').limit(1000).onSnapshot(s=>{
+    all=new Map(s.docs.map(d=>[d.id,d.data()]));ready=true;
+    if(!s.metadata.fromCache){clearTimeout(timer);setSync('ok','Sincronizzato');banner('')}
+    render();
+  },err=>{clearTimeout(timer);ready=true;setSync('err','Errore');banner('Collegamento interrotto ('+err.code+'). Ricarica la pagina.');render()});
+  db.doc('config/settings').onSnapshot(s=>{
+    if(s.exists){const d=s.data();cfg={capacity:+d.capacity||72,turni:Array.isArray(d.turni)&&d.turni.length?d.turni.map(String):cfg.turni,dur:+d.dur||90,durSab:+d.durSab||70,buffer:Number.isFinite(+d.buffer)?+d.buffer:10,heads:Number.isFinite(+d.heads)?+d.heads:1,
+      tables:Array.isArray(d.tables)&&d.tables.length?d.tables.map(t=>({id:String(t.id),fila:String(t.fila||''),solo:+t.solo||1,join:t.join!==undefined?!!t.join:+t.lati>0})):DEF_TABLES}}
+    render();
+  },()=>{});
+  try{sampleFn=await claude.use('sample');if(sampleFn){const L=await sampleFn.limits().catch(()=>null);if(L&&L.images)$('#shotBtn').hidden=false}}catch(e){sampleFn=null}
+  try{const u=await claude.use('user');if(u&&u.can){const w=await u.can('data.write');if(w===false)document.body.classList.add('ro')}}catch(e){}
+})();
+}
+</script>
+<script type="module">
+import {firebaseConfig} from './firebase-config.js';
+const V='https://www.gstatic.com/firebasejs/10.12.2/';
+const {initializeApp}=await import(V+'firebase-app.js');
+const A=await import(V+'firebase-auth.js');
+const F=await import(V+'firebase-firestore.js');
+const app=initializeApp(firebaseConfig),auth=A.getAuth(app);
+let fs;try{fs=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){fs=F.getFirestore(app)}
+const E=err=>({code:err&&err.code==='permission-denied'?'invalid_argument':'unavailable',message:String(err&&err.message||err)});
+const wrap=p=>p.catch(err=>{throw E(err)});
+const snapD=s=>({id:s.id,exists:s.exists(),data:()=>s.data(),metadata:s.metadata});
+const snapQ=s=>({docs:s.docs.map(d=>({id:d.id,exists:true,data:()=>d.data(),metadata:d.metadata})),size:s.size,empty:s.empty,metadata:s.metadata,docChanges:()=>[]});
+const wD=r=>({id:r.id,path:r.path,get:()=>wrap(F.getDoc(r)).then(snapD),set:d=>wrap(F.setDoc(r,d)),update:d=>wrap(F.updateDoc(r,d)),delete:()=>wrap(F.deleteDoc(r)),
+  onSnapshot:(n,e)=>F.onSnapshot(r,{includeMetadataChanges:true},s=>n(snapD(s)),err=>e&&e(E(err)))});
+const wQ=q=>({where:(f,o,v)=>wQ(F.query(q,F.where(f,o,v))),orderBy:(f,d)=>wQ(F.query(q,F.orderBy(f,d))),limit:n=>wQ(F.query(q,F.limit(n))),
+  get:()=>wrap(F.getDocs(q)).then(snapQ),onSnapshot:(n,e)=>F.onSnapshot(q,{includeMetadataChanges:true},s=>n(snapQ(s)),err=>e&&e(E(err)))});
+const col=p=>{const c=F.collection(fs,p);return{...wQ(c),path:p,doc:id=>wD(id?F.doc(c,id):F.doc(c)),add:d=>wrap(F.addDoc(c,d)).then(wD)}};
+const db={doc:p=>wD(F.doc(fs,p)),collection:col};
+const L=document.getElementById('login'),err=document.getElementById('lErr');
+let started=false;
+A.onAuthStateChanged(auth,u=>{
+  if(u){L.classList.add('hide');if(!started){started=true;window.__setDb(db)}}
+  else{if(started)location.reload();L.classList.remove('hide');err.textContent=''}
+});
+document.getElementById('lf').addEventListener('submit',async e=>{
+  e.preventDefault();const b=document.getElementById('lBtn');b.disabled=true;err.textContent='Accesso…';
+  let u=document.getElementById('lUser').value.trim().toLowerCase();if(!u.includes('@'))u+='@blackout.app';
+  try{await A.signInWithEmailAndPassword(auth,u,document.getElementById('lPass').value)}
+  catch(x){err.textContent=x.code==='auth/too-many-requests'?'Troppi tentativi, riprova tra qualche minuto.':x.code==='auth/network-request-failed'?'Nessuna connessione.':'Utente o password sbagliati.'}
+  finally{b.disabled=false}
+});
+document.getElementById('outBtn').addEventListener('click',()=>A.signOut(auth));
+</script>
+</body>
+</html>
