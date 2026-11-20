@@ -57,6 +57,12 @@ textarea{min-height:84px;resize:vertical}
 .chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;color:var(--mute)}
 .chk input{width:22px;height:22px;min-height:0;margin:2px 0 0;flex:none;accent-color:var(--gold)}
 .info{font-size:15px;color:var(--mute);margin:0}
+.info:empty{display:none}
+.mode{border:0;padding:0;margin:0;display:grid;gap:8px}.mode legend{font-size:15px;font-weight:600;color:#e6dcc8;margin-bottom:6px;padding:0}
+.opt{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;font-weight:400}
+.opt:has(input:checked){border-color:var(--gold);background:#2a2419}
+.opt input{width:22px;height:22px;min-height:0;margin:2px 0 0;flex:none;accent-color:var(--gold)}
+.opt b{display:block;color:var(--ink);font-size:16px}.opt small{display:block;color:var(--mute);font-size:14px}
 .btn{width:100%;min-height:58px;border-radius:14px;border:0;background:var(--gold);color:#111;font:inherit;font-weight:800;font-size:18px;letter-spacing:.01em}
 .btn:disabled{opacity:.6}
 .err{color:#ff8a84;font-size:15px;margin:0;min-height:1.3em}
@@ -99,7 +105,11 @@ textarea{min-height:84px;resize:vertical}
         <label>Cellulare (WhatsApp)<input id="phone" name="tel" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="es. 333 1234567"></label>
         <label>Richiesta speciale (facoltativa)<textarea id="notes" maxlength="250" placeholder="Allergie, seggiolone, compleanno…"></textarea></label>
         <label class="hp" aria-hidden="true">Lascia vuoto<input id="web" tabindex="-1" autocomplete="off"></label>
-        <p class="info">Ti confermiamo il tavolo su WhatsApp il prima possibile.</p>
+        <fieldset class="mode"><legend>Come vuoi prenotare?</legend>
+          <label class="opt"><input type="radio" name="mode" value="online" checked><span><b id="mOnT">Conferma online</b><small id="mOnS">Il tavolo è confermato subito.</small></span></label>
+          <label class="opt"><input type="radio" name="mode" value="wa"><span><b>Prenota su WhatsApp</b><small>Si apre WhatsApp con la prenotazione già scritta.</small></span></label>
+        </fieldset>
+        <p class="info" id="info"></p>
         <label class="chk"><input type="checkbox" id="ok"><span>Accetto che nome e numero vengano usati solo per gestire questa prenotazione.</span></label>
         <p class="err" id="err" role="alert"></p>
         <button class="btn" id="send">INVIA LA PRENOTAZIONE</button>
@@ -129,11 +139,13 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const src=({google:'Google',whatsapp:'WhatsApp',wa:'WhatsApp',instagram:'Instagram',ig:'Instagram',facebook:'Facebook',fb:'Facebook'})[(new URLSearchParams(location.search).get('da')||'').toLowerCase()]||'Sito';
 const NTFY='blackout-fxkjxsf4dm1k'; // canale notifiche (app ntfy)
 const WA_NUM='393275406999'; // numero WhatsApp del locale, es. '393331234567' (vuoto = nascosto)
-let TIMES=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'],cal={chiusoSett:[1],giorni:{}};
+let TIMES=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'],cal={chiusoSett:[1],giorni:{},autoMax:6,soloRichSett:[6]},occ={};
 const now=new Date(),today=iso(now),maxD=new Date(now);maxD.setDate(maxD.getDate()+60);const max=iso(maxD);
 let step=0,date='',time='',people=0,month=new Date(now.getFullYear(),now.getMonth(),1),morePpl=false;
 
-function dayState(d){const g=cal.giorni[d]||{},wk=cal.chiusoSett.includes(pd(d).getDay());return{closed:g.chiuso!==undefined?!!g.chiuso:wk,offline:!!g.offline,off:Array.isArray(g.slotOff)?g.slotOff:[]}}
+function dayState(d){const g=cal.giorni[d]||{},dw=pd(d).getDay(),wk=cal.chiusoSett.includes(dw);return{closed:g.chiuso!==undefined?!!g.chiuso:wk,solo:g.solo!==undefined?!!g.solo:cal.soloRichSett.includes(dw),offline:!!g.offline,off:Array.isArray(g.slotOff)?g.slotOff:[]}}
+const canAuto=()=>date&&time&&people&&!dayState(date).solo&&people<=cal.autoMax&&((occ[date]&&occ[date][time]!==undefined)?occ[date][time]>=people:true);
+let mode='online';
 function timesFor(d){const st=dayState(d);if(st.closed||st.offline)return[];const m=now.getHours()*60+now.getMinutes();return TIMES.filter(t=>!st.off.includes(t)&&!(d===today&&+t.slice(0,2)*60+ +t.slice(3)<m+30))}
 const dayOk=d=>d>=today&&d<=max&&timesFor(d).length>0;
 
@@ -148,7 +160,7 @@ function renderCal(){
   $('#mNext').disabled=new Date(month.getFullYear(),month.getMonth()+1,1)>maxD;
 }
 function renderTimes(){const t=timesFor(date);$('#times').innerHTML=t.map(x=>`<button class="tile${x===time?' sel':''}" data-t="${x}">${x}</button>`).join('');$('#noTimes').hidden=t.length>0}
-function renderPpl(){const n=morePpl?30:8;$('#ppl').innerHTML=Array.from({length:n},(_,i)=>i+1).map(k=>`<button class="tile${k===people?' sel':''}" data-p="${k}">${k}</button>`).join('');$('#pMore').hidden=morePpl}
+function renderPpl(){const n=morePpl?40:8;$('#ppl').innerHTML=Array.from({length:n},(_,i)=>i+1).map(k=>`<button class="tile${k===people?' sel':''}" data-p="${k}">${k}</button>`).join('');$('#pMore').hidden=morePpl}
 const TITLES=['Scegli il giorno','Scegli l’orario','Quante persone?','I tuoi dati'];
 function go(s){
   if(s>=1&&!date)s=0;if(s>=2&&!time)s=1;if(s>=3&&!people)s=2;
@@ -159,7 +171,7 @@ function go(s){
   $('#pD').textContent=d?GG[d.getDay()].slice(0,3)+' '+d.getDate()+' '+MM[d.getMonth()].slice(0,3):'Giorno';
   $('#pT').textContent=time||'Orario';$('#pP').textContent=people?people+' pers.':'Persone';
   ['pD','pT','pP','pF'].forEach((id,i)=>{$('#'+id).className=i===s?'cur':(i<s?'done':'')});
-  if(s===0)renderCal();if(s===1)renderTimes();if(s===2)renderPpl();
+  if(s===0)renderCal();if(s===1)renderTimes();if(s===2)renderPpl();if(s===3)renderMode();
   scrollTo({top:0});
 }
 $('#dows').innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>`<div class="dow">${x}</div>`).join('');
@@ -171,12 +183,22 @@ $('#mPrev').addEventListener('click',()=>{month=new Date(month.getFullYear(),mon
 $('#mNext').addEventListener('click',()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1);renderCal()});
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
 $('#back').addEventListener('click',()=>go(Math.max(0,step-1)));
+function renderMode(){
+  const a=canAuto();
+  $('#mOnT').textContent=a?'Conferma online':'Richiesta online';
+  $('#mOnS').textContent=a?'Il tavolo è confermato subito.':(people>cal.autoMax?`Per gruppi oltre ${cal.autoMax} persone ti confermiamo noi su WhatsApp.`:'Per questo giorno e orario ti confermiamo noi su WhatsApp.');
+  const waOpt=document.querySelector('input[name=mode][value=wa]').closest('label');waOpt.hidden=!WA_NUM;if(!WA_NUM)mode='online';
+  $('#send').textContent=mode==='wa'?'PRENOTA SU WHATSAPP':a?'CONFERMA PRENOTAZIONE':'INVIA RICHIESTA';
+  $('#info').textContent=mode==='wa'?'Dopo il tocco premi Invia su WhatsApp per completare.':a?'':'La prenotazione sarà valida dopo il nostro messaggio di conferma.';
+}
+document.querySelectorAll('input[name=mode]').forEach(x=>x.addEventListener('change',()=>{mode=x.value;renderMode()}));
 go(0);
-if(WA_NUM){$('#send').textContent='CONFERMA PRENOTAZIONE';$('.info').textContent='Toccando Conferma si apre WhatsApp con la prenotazione già scritta: premi Invia per completarla.'}
 
 let fs,F;
 async function db(){if(fs)return fs;const {initializeApp}=await import(V+'firebase-app.js');F=await import(V+'firebase-firestore.js');fs=F.getFirestore(initializeApp(firebaseConfig));return fs}
-db().then(async()=>{const s=await F.getDoc(F.doc(fs,'pubblico/calendario'));if(s.exists()){const d=s.data();if(Array.isArray(d.chiusoSett))cal.chiusoSett=d.chiusoSett.map(Number);if(d.giorni&&typeof d.giorni==='object')cal.giorni=d.giorni;if(Array.isArray(d.orari)&&d.orari.length)TIMES=d.orari.map(String)}if(step===0)renderCal()}).catch(()=>{});
+db().then(async()=>{const s=await F.getDoc(F.doc(fs,'pubblico/calendario'));if(s.exists()){const d=s.data();if(Array.isArray(d.chiusoSett))cal.chiusoSett=d.chiusoSett.map(Number);if(d.giorni&&typeof d.giorni==='object')cal.giorni=d.giorni;if(Array.isArray(d.orari)&&d.orari.length)TIMES=d.orari.map(String);if(Number.isFinite(+d.autoMax))cal.autoMax=+d.autoMax;if(Array.isArray(d.soloRichSett))cal.soloRichSett=d.soloRichSett.map(Number)}
+  try{const o=await F.getDoc(F.doc(fs,'pubblico/occupazione'));if(o.exists()&&o.data().d)occ=o.data().d}catch(_){}
+  if(step===0)renderCal();if(step===3)renderMode()}).catch(()=>{});
 
 $('#f').addEventListener('submit',async e=>{
   e.preventDefault();const err=$('#err');err.textContent='';
@@ -187,20 +209,23 @@ $('#f').addEventListener('submit',async e=>{
   if(name.length<2)return err.textContent='Scrivi il tuo nome.';
   if(phone.replace(/\D/g,'').length<8)return err.textContent='Scrivi un numero di cellulare valido.';
   if(!$('#ok').checked)return err.textContent='Spunta il consenso per inviare la prenotazione.';
+  const auto=mode==='online'&&canAuto();
   const b=$('#send');b.disabled=true;b.textContent='INVIO…';
   try{
     await db();
-    await F.addDoc(F.collection(fs,'richieste'),{name,phone,people,date,time,notes,source:src,stato:'nuova',createdAt:F.serverTimestamp()});
+    await F.addDoc(F.collection(fs,'richieste'),{name,phone,people,date,time,notes,source:mode==='wa'?'WhatsApp':src,stato:'nuova',auto,createdAt:F.serverTimestamp()});
     const d=pd(date),txt=`${name} · ${people} pers. · ${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]} alle ${time}${notes?' · '+notes:''} (${src})`;
-    try{fetch('https://ntfy.sh/'+NTFY+'?'+new URLSearchParams({title:'Nuova prenotazione online',tags:'bell',priority:'high',click:new URL('./',location.href).href}),{method:'POST',body:txt,mode:'no-cors'}).catch(()=>{})}catch(_){}
+    try{fetch('https://ntfy.sh/'+NTFY+'?'+new URLSearchParams({title:auto?'Prenotazione online confermata':'Nuova richiesta da confermare',tags:'bell',priority:'high',click:new URL('./',location.href).href}),{method:'POST',body:txt,mode:'no-cors'}).catch(()=>{})}catch(_){}
+    $('#dTitle').textContent=mode==='wa'?'Quasi fatto!':auto?'Prenotazione confermata!':'Richiesta inviata!';
+    $('#dText').textContent=mode==='wa'?'Manca solo un passaggio.':auto?'Ti aspettiamo! Per modifiche o disdette scrivici su WhatsApp.':'Grazie! Ti confermiamo il tavolo su WhatsApp il prima possibile.';
     if(WA_NUM){const msg=`Ciao Black-Out! Vorrei prenotare un tavolo:\nNome: ${name}\nGiorno: ${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]}\nOrario: ${time}\nPersone: ${people}${notes?'\nNote: '+notes:''}`;
-      const u='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msg);$('#wa').href=u;$('#wa').hidden=false;$('#dTitle').textContent='Quasi fatto!';$('#dText').textContent='Grazie! Manca solo un passaggio.';$('#waTip').hidden=false;setTimeout(()=>{location.href=u},600)}
+      const u='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msg);$('#wa').href=u;$('#wa').hidden=mode!=='wa';$('#waTip').hidden=mode!=='wa';if(mode==='wa')setTimeout(()=>{location.href=u},400)}
     $('#sum').innerHTML=`<b>${esc(name)}</b><br>${GG[d.getDay()]} ${d.getDate()} ${MM[d.getMonth()]} · ${time} · ${people} ${people===1?'persona':'persone'}${notes?'<br><span style="color:#a79e8b">'+esc(notes)+'</span>':''}`;
     $('#flow').hidden=true;$('#back').disabled=true;$('#done').hidden=false;scrollTo({top:0});
   }catch(x){err.textContent='Invio non riuscito, riprova tra poco.'}
-  finally{b.disabled=false;b.textContent=WA_NUM?'CONFERMA PRENOTAZIONE':'INVIA LA PRENOTAZIONE'}
+  finally{b.disabled=false;renderMode()}
 });
-$('#again').addEventListener('click',()=>{$('#f').reset();date='';time='';people=0;morePpl=false;$('#done').hidden=true;$('#flow').hidden=false;go(0)});
+$('#again').addEventListener('click',()=>{$('#f').reset();mode='online';date='';time='';people=0;morePpl=false;$('#done').hidden=true;$('#flow').hidden=false;go(0)});
 </script>
 </body>
 </html>
